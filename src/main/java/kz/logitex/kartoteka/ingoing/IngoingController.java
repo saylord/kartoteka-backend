@@ -43,7 +43,7 @@ public class IngoingController {
                                             @RequestParam(defaultValue = "id") String sort,
                                             @RequestParam(defaultValue = "false") boolean asc,
                                             @RequestParam(required = false) String term) {
-        return ResponseEntity.ok(ingoingService.getAllIngoingsByStatusAndSla(page, size, status, sort, asc, term));
+        return ResponseEntity.ok(ingoingService.getAllIngoingsByStatus(page, size, status, sort, asc, term));
     }
 
     @PutMapping("/{id}")

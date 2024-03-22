@@ -8,7 +8,6 @@ import jakarta.persistence.criteria.Root;
 import kz.logitex.kartoteka.ingoing.IngoingMinDTO;
 import kz.logitex.kartoteka.model.Ingoing;
 import kz.logitex.kartoteka.model.Status;
-import kz.logitex.kartoteka.util.AuthUtil;
 import kz.logitex.kartoteka.util.StringModifier;
 import lombok.RequiredArgsConstructor;
 import org.antlr.v4.runtime.misc.Pair;
@@ -37,11 +36,9 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
 
         // Create a list to hold the predicates for filtering
         var predicates = new ArrayList<Predicate>();
-        System.out.println("111");
         query.where(cb.and(predicates.toArray(new Predicate[0])));
         createIngoingMinDTOQuery(cb, root, query);
         var listIngoings = em.createQuery(query);
-        System.out.println("222");
         // Check if term is not null or empty
         if (term != null && !term.isEmpty()) {
             var id = parseId(term);
@@ -78,16 +75,13 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
                 })
                 .collect(Collectors.toList());
         query.orderBy(orderList);
-        System.out.println("333");
         var typedQuery = em.createQuery(query);
         var totalItems = typedQuery.getResultList().size();
-
         // Apply paging
         typedQuery.setFirstResult((int) pageable.getOffset());
         typedQuery.setMaxResults(pageable.getPageSize());
 
         var resultList = typedQuery.getResultList();
-        System.out.println("555");
 
         return new Pair<>(
                 new PageImpl<>(resultList, pageable, totalItems),

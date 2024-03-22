@@ -23,5 +23,5 @@ VALUES ('secret');
 INSERT INTO building (name)
 VALUES ('building');
 
-INSERT INTO ingoing (document_number, description, resolution, created_timestamp, document_timestamp, building_id, secret_id, copy_number, copy_sheet, sheet, schedule)
-VALUES ('1234', 'description', 'qqq', 1710775661623, 1710775661623, 1, 1, 1, 2, 3, 4);
+INSERT INTO ingoing (document_number, description, resolution, status, created_timestamp, document_timestamp, building_id, secret_id, copy_number, copy_sheet, sheet, schedule)
+VALUES ('1234', 'description', 'qqq', 'OPENED', 1710775661623, 1710775661623, 1, 1, 1, 2, 3, 4);

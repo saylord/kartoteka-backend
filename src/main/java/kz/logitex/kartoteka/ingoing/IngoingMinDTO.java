@@ -5,9 +5,10 @@ import kz.logitex.kartoteka.model.Secret;
 import kz.logitex.kartoteka.model.Status;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+@NoArgsConstructor
 public class IngoingMinDTO {
     private Long id;
     private String documentNumber;

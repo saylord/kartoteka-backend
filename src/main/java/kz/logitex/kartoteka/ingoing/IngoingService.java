@@ -9,8 +9,12 @@ import kz.logitex.kartoteka.status.StatusService;
 import kz.logitex.kartoteka.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -76,18 +80,16 @@ public class IngoingService {
                 .build();
     }
 
-    public List<Ingoing> getAllIngoingsByStatusAndSla(int page, int size, Set<Status> status, String sort, boolean asc, String term) {
-//        var sorting = asc ? Sort.by(sort).ascending() : Sort.by(sort).descending();
-//        Pageable paging = PageRequest.of(page, size, sorting);
-//
-//        Set<Status> statusSet = (status != null) ? status : EnumSet.allOf(Status.class);
-//
-//        var pageTickets = ingoingRepository.findByStatusIn(
-//                term, statusSet, paging
-//        );
-//        System.out.println("444");
-//        return getTicketLotDTO(pageTickets.a, pageTickets.b);
-        return ingoingRepository.findAll();
+    public IngoingLotDTO getAllIngoingsByStatus(int page, int size, Set<Status> status, String sort, boolean asc, String term) {
+        var sorting = asc ? Sort.by(sort).ascending() : Sort.by(sort).descending();
+        Pageable paging = PageRequest.of(page, size, sorting);
+
+        Set<Status> statusSet = (status != null) ? status : EnumSet.allOf(Status.class);
+
+        var pageTickets = ingoingRepository.findByStatusIn(
+                term, statusSet, paging
+        );
+        return getTicketLotDTO(pageTickets.a, pageTickets.b);
     }
 
     private IngoingLotDTO getTicketLotDTO(Page<IngoingMinDTO> pageTickets, List<IngoingMinDTO> list) {
