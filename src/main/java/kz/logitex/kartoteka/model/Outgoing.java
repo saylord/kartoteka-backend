@@ -1,30 +1,39 @@
-package kz.logitex.kartoteka.ingoing;
+package kz.logitex.kartoteka.model;
 
-import kz.logitex.kartoteka.model.Building;
-import kz.logitex.kartoteka.model.IngoingStatusHistory;
-import kz.logitex.kartoteka.model.Status;
-import kz.logitex.kartoteka.model.User;
-import kz.logitex.kartoteka.model.Secret;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.List;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-public class IngoingDTO {
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "outgoing")
+public class Outgoing {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String documentNumber;
     private String description;
-    private String resolution;
+    private String exemplar;
     private Long createdTimestamp;
     private Long estimatedTimestamp;
     private Long closedTimestamp;
     private Long documentTimestamp;
+    private Long sendingTimestamp;
+    @ManyToOne
     private User userLastUpdated;
+    @Enumerated(EnumType.STRING)
     private Status status;
+    @ManyToOne
     private Building building;
+    @ManyToOne
     private Secret secret;
+    @ManyToOne
+    private User executor;
     private int copyNumber;
     private int copySheet;
     private int sheet;
@@ -32,5 +41,4 @@ public class IngoingDTO {
     private String docDepartmentIndex;
     private int docCopySheet;
     private int docCopyPrint;
-    private List<IngoingStatusHistory> statusHistories;
 }

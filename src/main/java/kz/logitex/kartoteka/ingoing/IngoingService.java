@@ -86,28 +86,28 @@ public class IngoingService {
 
         Set<Status> statusSet = (status != null) ? status : EnumSet.allOf(Status.class);
 
-        var pageTickets = ingoingRepository.findByStatusIn(
+        var pageIngoings = ingoingRepository.findByStatusIn(
                 term, statusSet, paging
         );
-        return getTicketLotDTO(pageTickets.a, pageTickets.b);
+        return getIngoingLotDTO(pageIngoings.a, pageIngoings.b);
     }
 
-    private IngoingLotDTO getTicketLotDTO(Page<IngoingMinDTO> pageTickets, List<IngoingMinDTO> list) {
+    private IngoingLotDTO getIngoingLotDTO(Page<IngoingMinDTO> pageIngoings, List<IngoingMinDTO> list) {
         Map<Status, Long> statusCounts = list.stream()
                 .collect(Collectors.groupingBy(IngoingMinDTO::getStatus, Collectors.counting()));
 
         var totalExpired = list.stream()
-                .filter(ticket ->
-                        ticket.getEstimatedTimestamp() != null &&
-                                ticket.getStatus() != Status.CLOSED &&
-                                System.currentTimeMillis() > ticket.getEstimatedTimestamp())
+                .filter(ingoing ->
+                        ingoing.getEstimatedTimestamp() != null &&
+                                ingoing.getStatus() != Status.CLOSED &&
+                                System.currentTimeMillis() > ingoing.getEstimatedTimestamp())
                 .count();
 
         return IngoingLotDTO.builder()
-                .ingoings(pageTickets.getContent())
-                .currentPage(pageTickets.getNumber())
-                .totalItems(pageTickets.getTotalElements())
-                .totalPages(pageTickets.getTotalPages())
+                .ingoings(pageIngoings.getContent())
+                .currentPage(pageIngoings.getNumber())
+                .totalItems(pageIngoings.getTotalElements())
+                .totalPages(pageIngoings.getTotalPages())
                 .totalDocuments(list.size())
                 .totalOpened(statusCounts.getOrDefault(Status.OPENED, 0L))
                 .totalClosed(statusCounts.getOrDefault(Status.CLOSED, 0L))
@@ -119,7 +119,7 @@ public class IngoingService {
         var ingoing = ingoingRepository.findById(id).orElseThrow(() -> new NotFoundException("Входящий не найден с айди: " + id));
         var currentUser = userRepository.findById(authUtil.getAuth().getUserId()).get();
         if (ingoing.getStatus() != request.getStatus()) {
-            ingoing = statusService.handleStatusTransition(ingoing, request.getStatus());
+            ingoing = statusService.handleStatusTransitionIngoing(ingoing, request.getStatus());
             statusHistoryService.createStatusHistory(
                     id,
                     currentUser,

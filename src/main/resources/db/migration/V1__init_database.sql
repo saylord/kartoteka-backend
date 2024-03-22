@@ -54,32 +54,34 @@ create table if not exists ingoing
     schedule int,
     user_last_updated_id bigint constraint fk61tgpffh9bl4vcry3uwsiilad references users
 );
---
--- -- CREATING outgoing TABLE
--- create table if not exists outgoing
--- (
---     id                     bigserial primary key,
---     document_number          varchar(128),
---     exemplar varchar(64),
---     description            varchar(255),
---     closed_timestamp       bigint,
---     created_timestamp      bigint,
---     estimated_timestamp    bigint,
---     document_timestamp    bigint,
---     sending_timestamp    bigint,
---     status                 varchar(255) constraint ingoing_status_check
---                     check ((status)::text = ANY
---                 (ARRAY [('OPENED'::character varying)::text, ('CLOSED'::character varying)::text])),
---     building_id             bigint constraint fkditu6lr4ek16tkxtdsne0gxib references building,
---     secret_id             bigint constraint fkgucpa7a16tdxn1x4twhy2jf9 references secret,
---     copy_number int,
---     copy_sheet int,
---     sheet int,
---     schedule int,
---     doc_department_index varchar(64),
---     doc_copy_sheet int,
---     doc_copy_print int
--- );
+
+-- CREATING outgoing TABLE
+create table if not exists outgoing
+(
+    id                     bigserial primary key,
+    document_number          varchar(128),
+    exemplar varchar(64),
+    description            varchar(255),
+    closed_timestamp       bigint,
+    created_timestamp      bigint,
+    estimated_timestamp    bigint,
+    document_timestamp    bigint,
+    sending_timestamp    bigint,
+    status                 varchar(255) constraint ingoing_status_check
+                    check ((status)::text = ANY
+                (ARRAY [('OPENED'::character varying)::text, ('CLOSED'::character varying)::text])),
+    building_id             bigint constraint fkditu6lr4ek16tkxtdsne0gxib references building,
+    secret_id             bigint constraint fkgucpa7a16tdxn1x4twhy2jf9 references secret,
+    executor_id             bigint constraint fkgucpa7a16tdxn1x4twho2jf9 references users,
+    copy_number int,
+    copy_sheet int,
+    sheet int,
+    schedule int,
+    doc_department_index varchar(64),
+    doc_copy_sheet int,
+    doc_copy_print int,
+    user_last_updated_id bigint constraint fk61tgpffh9bl4vcry3uwsdslad references users
+);
 
 create table ingoing_status_history
 (
@@ -93,14 +95,14 @@ create table ingoing_status_history
     user_id         bigint
 );
 
--- create table outgoing_status_history
--- (
---     id              bigserial primary key,
---     outgoing_id       bigint,
---     status_from     varchar(255) constraint ingoing_status_from_check check ((status_from)::text = ANY
---         ((ARRAY ['OPENED'::character varying, 'CLOSED'::character varying])::text[])),
---     status_to       varchar(255) constraint ingoing_status_to_check check ((status_to)::text = ANY
---                                                                           ((ARRAY ['OPENED'::character varying, 'CLOSED'::character varying])::text[])),
---     timestamp       bigint,
---     user_id         bigint
--- );
+create table outgoing_status_history
+(
+    id              bigserial primary key,
+    outgoing_id       bigint,
+    status_from     varchar(255) constraint ingoing_status_from_check check ((status_from)::text = ANY
+        ((ARRAY ['OPENED'::character varying, 'CLOSED'::character varying])::text[])),
+    status_to       varchar(255) constraint ingoing_status_to_check check ((status_to)::text = ANY
+                                                                          ((ARRAY ['OPENED'::character varying, 'CLOSED'::character varying])::text[])),
+    timestamp       bigint,
+    user_id         bigint
+);

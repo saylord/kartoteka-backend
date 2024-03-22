@@ -2,6 +2,7 @@ package kz.logitex.kartoteka.status;
 
 import kz.logitex.kartoteka.exception.BadRequestException;
 import kz.logitex.kartoteka.model.Ingoing;
+import kz.logitex.kartoteka.model.Outgoing;
 import kz.logitex.kartoteka.model.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,16 +21,29 @@ public class StatusService {
         return Arrays.asList(Status.values());
     }
 
-    public Ingoing handleStatusTransition(Ingoing ingoing, Status newStatus) {
+    public Ingoing handleStatusTransitionIngoing(Ingoing ingoing, Status newStatus) {
         if (Objects.requireNonNull(newStatus) == Status.CLOSED) {
-            handleClosedStatus(ingoing);
+            handleClosedStatusIngoing(ingoing);
         } else {
             throw new BadRequestException("Неверный статус: " + newStatus);
         }
         return ingoing;
     }
 
-    private void handleClosedStatus(Ingoing ingoing) {
+    private void handleClosedStatusIngoing(Ingoing ingoing) {
         ingoing.setClosedTimestamp(System.currentTimeMillis());
+    }
+
+    public Outgoing handleStatusTransitionOutgoing(Outgoing outgoing, Status newStatus) {
+        if (Objects.requireNonNull(newStatus) == Status.CLOSED) {
+            handleClosedStatusOutgoing(outgoing);
+        } else {
+            throw new BadRequestException("Неверный статус: " + newStatus);
+        }
+        return outgoing;
+    }
+
+    private void handleClosedStatusOutgoing(Outgoing outgoing) {
+        outgoing.setClosedTimestamp(System.currentTimeMillis());
     }
 }

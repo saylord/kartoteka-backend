@@ -1,8 +1,10 @@
-package kz.logitex.kartoteka.ingoing;
+package kz.logitex.kartoteka.outgoing;
 
 import jakarta.validation.Valid;
 import kz.logitex.kartoteka.exception.ForbiddenException;
+import kz.logitex.kartoteka.ingoing.IngoingService;
 import kz.logitex.kartoteka.model.Ingoing;
+import kz.logitex.kartoteka.model.Outgoing;
 import kz.logitex.kartoteka.model.Role;
 import kz.logitex.kartoteka.model.Status;
 import kz.logitex.kartoteka.util.AuthUtil;
@@ -14,46 +16,43 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Controller class responsible for handling HTTP requests related to ingoings.
- */
 @RestController
-@RequestMapping("/api/v1/ingoing")
+@RequestMapping("/api/v1/outgoing")
 @RequiredArgsConstructor
-public class IngoingController {
+public class OutgoingController {
     @Autowired
-    private IngoingService ingoingService;
+    private OutgoingService outgoingService;
     @Autowired
     private AuthUtil authUtil;
 
     @PostMapping
-    public ResponseEntity<?> createIngoing(@Valid @RequestBody Ingoing request) {
-        return ResponseEntity.ok(ingoingService.createIngoing(request));
+    public ResponseEntity<?> createOutgoing(@Valid @RequestBody Outgoing request) {
+        return ResponseEntity.ok(outgoingService.createOutgoing(request));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getIngoing(@PathVariable(value = "id") Long id) {
-        return ResponseEntity.ok(ingoingService.getIngoingById(id));
+    public ResponseEntity<?> getOutgoing(@PathVariable(value = "id") Long id) {
+        return ResponseEntity.ok(outgoingService.getOutgoingById(id));
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllIngoings(@RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<?> getAllOutgoings(@RequestParam(defaultValue = "0") int page,
                                             @RequestParam(defaultValue = "25") int size,
                                             @RequestParam(required = false) Set<Status> status,
                                             @RequestParam(defaultValue = "id") String sort,
                                             @RequestParam(defaultValue = "false") boolean asc,
                                             @RequestParam(required = false) String term) {
-        return ResponseEntity.ok(ingoingService.getAllIngoingsByStatus(page, size, status, sort, asc, term));
+        return ResponseEntity.ok(outgoingService.getAllOutgoingsByStatus(page, size, status, sort, asc, term));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateIngoing(@PathVariable(value = "id") Long id, @RequestBody Ingoing ingoing) {
-        return ResponseEntity.ok(ingoingService.updateIngoing(id, ingoing));
+    public ResponseEntity<?> updateOutgoing(@PathVariable(value = "id") Long id, @RequestBody Outgoing outgoing) {
+        return ResponseEntity.ok(outgoingService.updateOutgoing(id, outgoing));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteIngoing(@PathVariable(value = "id") Long id) {
+    public ResponseEntity<?> deleteOutgoing(@PathVariable(value = "id") Long id) {
         if (!authUtil.hasPrivileges(List.of(Role.ADMIN))) throw new ForbiddenException("Доступ запрещен");
-        return ResponseEntity.ok(ingoingService.deleteIngoing(id));
+        return ResponseEntity.ok(outgoingService.deleteOutgoing(id));
     }
 }
