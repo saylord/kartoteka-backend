@@ -35,5 +35,6 @@ public class Ingoing {
     private int copySheet;
     private int sheet;
     private int schedule;
+    private boolean reregistration;
 }
 

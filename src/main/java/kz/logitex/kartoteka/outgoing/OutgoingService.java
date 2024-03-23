@@ -45,7 +45,6 @@ public class OutgoingService {
                 .estimatedTimestamp(estimatedTimestamp)
                 .documentTimestamp(request.getDocumentTimestamp())
                 .sendingTimestamp(request.getSendingTimestamp())
-                .userLastUpdated(userRepository.findById(authUtil.getAuth().getUserId()).get())
                 .status(Status.OPENED)
                 .executor(request.getExecutor())
                 .building(request.getBuilding())
@@ -57,6 +56,9 @@ public class OutgoingService {
                 .docDepartmentIndex(request.getDocDepartmentIndex())
                 .docCopySheet(request.getDocCopySheet())
                 .docCopyPrint(request.getDocCopyPrint())
+                .reregistration(request.isReregistration())
+                .returnAddress(request.isReturnAddress())
+                .onlyAddress(request.isOnlyAddress())
                 .build();
 
         return outgoingRepository.save(outgoing);
@@ -86,6 +88,9 @@ public class OutgoingService {
                 .docDepartmentIndex(outgoing.getDocDepartmentIndex())
                 .docCopySheet(outgoing.getDocCopySheet())
                 .docCopyPrint(outgoing.getDocCopyPrint())
+                .reregistration(outgoing.isReregistration())
+                .returnAddress(outgoing.isReturnAddress())
+                .onlyAddress(outgoing.isOnlyAddress())
                 .build();
     }
 
@@ -153,6 +158,9 @@ public class OutgoingService {
         outgoing.setDocDepartmentIndex(request.getDocDepartmentIndex());
         outgoing.setDocCopySheet(request.getCopySheet());
         outgoing.setDocCopyPrint(request.getDocCopyPrint());
+        outgoing.setReregistration(request.isReregistration());
+        outgoing.setReturnAddress(request.isReturnAddress());
+        outgoing.setOnlyAddress(request.isOnlyAddress());
 
         return outgoingRepository.save(outgoing);
     }

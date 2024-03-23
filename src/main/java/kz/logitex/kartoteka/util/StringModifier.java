@@ -3,6 +3,8 @@ package kz.logitex.kartoteka.util;
 import lombok.extern.slf4j.Slf4j;
 
 import java.text.Normalizer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 @Slf4j
@@ -18,5 +20,14 @@ public class StringModifier {
 
         // Convert to lowercase with the default locale
         return normalized.toLowerCase(Locale.getDefault());
+    }
+
+    public static String timestampToDate(Long timestamp) {
+        if (timestamp != null) {
+            var simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+            return simpleDateFormat.format(new Date(timestamp));
+        } else {
+            return "";
+        }
     }
 }

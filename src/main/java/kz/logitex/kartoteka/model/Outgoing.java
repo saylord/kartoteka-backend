@@ -41,4 +41,7 @@ public class Outgoing {
     private String docDepartmentIndex;
     private int docCopySheet;
     private int docCopyPrint;
+    private boolean reregistration;
+    private boolean returnAddress;
+    private boolean onlyAddress;
 }
