@@ -1,11 +1,11 @@
 package kz.logitex.kartoteka.repository;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.*;
+import kz.logitex.kartoteka.ingoing.IngoingDTO;
 import kz.logitex.kartoteka.ingoing.IngoingMinDTO;
+import kz.logitex.kartoteka.model.Building;
 import kz.logitex.kartoteka.model.Ingoing;
 import kz.logitex.kartoteka.model.Status;
 import kz.logitex.kartoteka.util.StringModifier;
@@ -38,11 +38,100 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
         var predicates = new ArrayList<Predicate>();
         query.where(cb.and(predicates.toArray(new Predicate[0])));
         createIngoingMinDTOQuery(cb, root, query);
+
         var listIngoings = em.createQuery(query);
-        // Check if term is not null or empty
+        // Add search criteria
+        addSearchCriteria(term, cb, root, predicates);
+
+        // Add predicates for filtering by status
+        if (statuses != null && !statuses.isEmpty()) {
+            predicates.add(getStatusInPredicate(statuses, cb, root));
+        }
+        // Construct the WHERE clause with the combined predicates
+        query.where(cb.and(predicates.toArray(new Predicate[0])));
+        // Select the necessary attributes to construct TicketMinDTO
+        createIngoingMinDTOQuery(cb, root, query);
+        // Apply sorting
+        var orderList = getSortingOrders(pageable, cb, root);
+        query.orderBy(orderList);
+        var typedQuery = em.createQuery(query);
+        var totalItems = typedQuery.getResultList().size();
+        // Apply paging
+        applyPaging(pageable, typedQuery);
+        var resultList = typedQuery.getResultList();
+
+        return new Pair<>(
+                new PageImpl<>(resultList, pageable, totalItems),
+                listIngoings.getResultList()
+        );
+    }
+
+    @Override
+    public List<IngoingDTO> findAllByFilters(Long start, Long end, String description, List<Building> building) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<IngoingDTO> query = cb.createQuery(IngoingDTO.class);
+        Root<Ingoing> root = query.from(Ingoing.class);
+
+        // Define predicates for filtering
+        Predicate predicate = buildPredicate(start, end, description, building, cb, root);
+
+        // Apply predicates to the query
+        query.where(predicate);
+
+        // Select the necessary attributes to construct IngoingDTO
+        buildSelection(root, query, cb);
+
+        // Execute the query and convert the results to IngoingDTO
+        return em.createQuery(query).getResultList();
+    }
+
+    private Predicate buildPredicate(Long start, Long end, String description, List<Building> building,
+                                     CriteriaBuilder cb, Root<Ingoing> root) {
+        Predicate predicate = cb.conjunction();
+
+        // Filter by start and end timestamps
+        if (start != null && end != null) {
+            predicate = cb.and(predicate, cb.between(root.get("createdTimestamp"), start, end));
+        }
+
+        // Filter by building
+        if (building != null && !building.isEmpty()) {
+            predicate = cb.and(root.get("building").in(building));
+        }
+
+        // Filter by description
+        if (description != null && !description.isEmpty()) {
+            var normalizedDescription = StringModifier.normalizeAndLowerCase(description);
+            predicate = cb.and(predicate, cb.like(cb.lower(root.get("description")), "%" + normalizedDescription + "%"));
+        }
+
+        return predicate;
+    }
+
+    private void buildSelection(Root<Ingoing> root, CriteriaQuery<IngoingDTO> query, CriteriaBuilder cb) {
+        query.multiselect(
+                root.get("id"),
+                root.get("documentNumber"),
+                root.get("description"),
+                root.get("resolution"),
+                root.get("createdTimestamp"),
+                root.get("estimatedTimestamp"),
+                root.get("closedTimestamp"),
+                root.get("documentTimestamp"),
+                root.get("status"),
+                root.get("building"),
+                root.get("secret"),
+                root.get("copyNumber"),
+                root.get("copySheet"),
+                root.get("sheet"),
+                root.get("schedule"),
+                root.get("reregistration")
+        );
+    }
+
+    private void addSearchCriteria(String term, CriteriaBuilder cb, Root<Ingoing> root, List<Predicate> predicates) {
         if (term != null && !term.isEmpty()) {
             var id = parseId(term);
-
             if (id != null) {
                 predicates.add(searchById(id, cb, root));
             } else {
@@ -55,38 +144,20 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
                 predicates.add(searchCondition);
             }
         }
+    }
 
-        // Add predicates for filtering by status
-        if (statuses != null && !statuses.isEmpty()) {
-            predicates.add(getStatusInPredicate(statuses, cb, root));
-        }
+    private void applyPaging(Pageable pageable, TypedQuery<IngoingMinDTO> typedQuery) {
+        typedQuery.setFirstResult((int) pageable.getOffset());
+        typedQuery.setMaxResults(pageable.getPageSize());
+    }
 
-        // Construct the WHERE clause with the combined predicates
-        query.where(cb.and(predicates.toArray(new Predicate[0])));
-
-        // Select the necessary attributes to construct TicketMinDTO
-        createIngoingMinDTOQuery(cb, root, query);
-
-        // Apply sorting
-        var orderList = pageable.getSort().stream()
+    private List<Order> getSortingOrders(Pageable pageable, CriteriaBuilder cb, Root<Ingoing> root) {
+        return pageable.getSort().stream()
                 .map(order -> {
                     var path = root.get(order.getProperty());
                     return order.isAscending() ? cb.asc(path) : cb.desc(path);
                 })
                 .collect(Collectors.toList());
-        query.orderBy(orderList);
-        var typedQuery = em.createQuery(query);
-        var totalItems = typedQuery.getResultList().size();
-        // Apply paging
-        typedQuery.setFirstResult((int) pageable.getOffset());
-        typedQuery.setMaxResults(pageable.getPageSize());
-
-        var resultList = typedQuery.getResultList();
-
-        return new Pair<>(
-                new PageImpl<>(resultList, pageable, totalItems),
-                listIngoings.getResultList()
-        );
     }
 
     private Long parseId(String term) {

@@ -52,7 +52,8 @@ create table if not exists ingoing
     copy_sheet int,
     sheet int,
     schedule int,
-    user_last_updated_id bigint constraint fk61tgpffh9bl4vcry3uwsiilad references users
+    user_last_updated_id bigint constraint fk61tgpffh9bl4vcry3uwsiilad references users,
+    reregistration      boolean not null
 );
 
 -- CREATING outgoing TABLE
@@ -80,7 +81,10 @@ create table if not exists outgoing
     doc_department_index varchar(64),
     doc_copy_sheet int,
     doc_copy_print int,
-    user_last_updated_id bigint constraint fk61tgpffh9bl4vcry3uwsdslad references users
+    user_last_updated_id bigint constraint fk61tgpffh9bl4vcry3uwsdslad references users,
+    reregistration      boolean not null,
+    return_address       boolean not null,
+    only_address         boolean not null
 );
 
 create table ingoing_status_history

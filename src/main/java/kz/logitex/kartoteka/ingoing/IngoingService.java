@@ -43,7 +43,6 @@ public class IngoingService {
                 .createdTimestamp(createdTimestamp)
                 .estimatedTimestamp(estimatedTimestamp)
                 .documentTimestamp(request.getDocumentTimestamp())
-                .userLastUpdated(userRepository.findById(authUtil.getAuth().getUserId()).get())
                 .status(Status.OPENED)
                 .building(request.getBuilding())
                 .secret(request.getSecret())
@@ -51,6 +50,7 @@ public class IngoingService {
                 .copySheet(request.getCopySheet())
                 .sheet(request.getSheet())
                 .schedule(request.getSchedule())
+                .reregistration(request.isReregistration())
                 .build();
 
         return ingoingRepository.save(ingoing);
@@ -77,6 +77,7 @@ public class IngoingService {
                 .copySheet(ingoing.getCopySheet())
                 .sheet(ingoing.getSheet())
                 .schedule(ingoing.getSchedule())
+                .reregistration(ingoing.isReregistration())
                 .build();
     }
 
@@ -139,6 +140,7 @@ public class IngoingService {
         ingoing.setCopySheet(request.getCopySheet());
         ingoing.setSheet(request.getSheet());
         ingoing.setSchedule(request.getSchedule());
+        ingoing.setReregistration(request.isReregistration());
 
         return ingoingRepository.save(ingoing);
     }
