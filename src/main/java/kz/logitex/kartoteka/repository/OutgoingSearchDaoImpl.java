@@ -3,8 +3,6 @@ package kz.logitex.kartoteka.repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
-import kz.logitex.kartoteka.ingoing.IngoingDTO;
-import kz.logitex.kartoteka.ingoing.IngoingMinDTO;
 import kz.logitex.kartoteka.model.*;
 import kz.logitex.kartoteka.outgoing.OutgoingDTO;
 import kz.logitex.kartoteka.outgoing.OutgoingMinDTO;
@@ -94,7 +92,7 @@ public class OutgoingSearchDaoImpl implements OutgoingSearchDao {
 
         // Filter by building
         if (building != null && !building.isEmpty()) {
-            predicate = cb.and(root.get("building").in(building));
+            predicate = cb.and(predicate, root.get("building").in(building));
         }
 
         // Filter by description
@@ -104,7 +102,7 @@ public class OutgoingSearchDaoImpl implements OutgoingSearchDao {
         }
 
         if (executor != null && !executor.isEmpty()) {
-            predicate = cb.and(root.get("executor").in(executor));
+            predicate = cb.and(predicate, root.get("executor").in(executor));
         }
 
         return predicate;

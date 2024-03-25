@@ -37,7 +37,7 @@ public class IngoingService {
         var estimatedTimestamp = createdTimestamp + 7200000; // 2hours
 
         var ingoing = Ingoing.builder()
-                .documentNumber(request.getDocumentNumber())
+                .documentNumber(request.getId() + " " + request.getSecret().getName())
                 .description(request.getDescription())
                 .resolution(request.getResolution())
                 .createdTimestamp(createdTimestamp)
@@ -128,7 +128,7 @@ public class IngoingService {
                     request.getStatus()
             );
         }
-        ingoing.setDocumentNumber(request.getDocumentNumber());
+        ingoing.setDocumentNumber(request.getId() + " " + request.getSecret().getName());
         ingoing.setDescription(request.getDescription());
         ingoing.setResolution(request.getResolution());
         ingoing.setDocumentTimestamp(request.getDocumentTimestamp());
