@@ -66,7 +66,7 @@ public class ReportIngoingExportPdf {
         firstTable.addCell(secondRow);
         document.add(firstTable);
 
-        var centerParagraph = new Paragraph(title + ingoing.getId(), fontBold14);
+        var centerParagraph = new Paragraph(title + ingoing.getId() + " " + ingoing.getSecret().getName(), fontBold14);
         centerParagraph.setAlignment(Paragraph.ALIGN_CENTER);
         centerParagraph.setSpacingBefore(0f);
         centerParagraph.setSpacingAfter(0f);

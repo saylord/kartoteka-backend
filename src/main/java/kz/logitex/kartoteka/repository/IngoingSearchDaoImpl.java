@@ -96,7 +96,7 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
 
         // Filter by building
         if (building != null && !building.isEmpty()) {
-            predicate = cb.and(root.get("building").in(building));
+            predicate = cb.and(predicate, root.get("building").in(building));
         }
 
         // Filter by description
@@ -133,7 +133,11 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
         if (term != null && !term.isEmpty()) {
             var id = parseId(term);
             if (id != null) {
-                predicates.add(searchById(id, cb, root));
+                var searchConditions = new ArrayList<Predicate>();
+                searchConditions.add(searchById(id, cb, root));
+                searchConditions.add(searchByDocumentNumber(term, cb, root));
+                var searchCondition = cb.or(searchConditions.toArray(new Predicate[0]));
+                predicates.add(searchCondition);
             } else {
                 var normalizedTerm = StringModifier.normalizeAndLowerCase(term);
                 var searchConditions = new ArrayList<Predicate>();
