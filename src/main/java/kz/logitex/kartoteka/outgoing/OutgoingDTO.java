@@ -13,8 +13,8 @@ import java.util.List;
 public class OutgoingDTO {
     private Long id;
     private String documentNumber;
+    private String cardNumber;
     private String description;
-    private String exemplar;
     private Long createdTimestamp;
     private Long estimatedTimestamp;
     private Long closedTimestamp;
@@ -25,23 +25,23 @@ public class OutgoingDTO {
     private Building building;
     private Secret secret;
     private User executor;
-    private int copyNumber;
-    private int copySheet;
+    private String exemplar;
+    private int totalSheet;
     private int sheet;
     private int schedule;
     private String docDepartmentIndex;
-    private int docCopySheet;
     private int docCopyPrint;
+    private Long reregistrationTimestamp;
+    private String caseNumber;
+    private String destraction;
+    private String nomenclature;
     private List<OutgoingStatusHistory> statusHistories;
-    private boolean reregistration;
-    private boolean returnAddress;
-    private boolean onlyAddress;
 
-    public OutgoingDTO(Long id, String documentNumber, String description, String exemplar, Long createdTimestamp, Long estimatedTimestamp, Long closedTimestamp, Long documentTimestamp, Long sendingTimestamp, Status status, Building building, Secret secret, User executor, int copyNumber, int copySheet, int sheet, int schedule, String docDepartmentIndex, int docCopySheet, int docCopyPrint, boolean reregistration, boolean returnAddress, boolean onlyAddress) {
+    public OutgoingDTO(Long id, String documentNumber, String cardNumber, String description, Long createdTimestamp, Long estimatedTimestamp, Long closedTimestamp, Long documentTimestamp, Long sendingTimestamp, Status status, Building building, Secret secret, User executor, String exemplar, int totalSheet, int sheet, int schedule, String docDepartmentIndex, int docCopyPrint, Long reregistrationTimestamp, String caseNumber, String destraction, String nomenclature) {
         this.id = id;
         this.documentNumber = documentNumber;
+        this.cardNumber = cardNumber;
         this.description = description;
-        this.exemplar = exemplar;
         this.createdTimestamp = createdTimestamp;
         this.estimatedTimestamp = estimatedTimestamp;
         this.closedTimestamp = closedTimestamp;
@@ -51,15 +51,15 @@ public class OutgoingDTO {
         this.building = building;
         this.secret = secret;
         this.executor = executor;
-        this.copyNumber = copyNumber;
-        this.copySheet = copySheet;
+        this.exemplar = exemplar;
+        this.totalSheet = totalSheet;
         this.sheet = sheet;
         this.schedule = schedule;
         this.docDepartmentIndex = docDepartmentIndex;
-        this.docCopySheet = docCopySheet;
         this.docCopyPrint = docCopyPrint;
-        this.reregistration = reregistration;
-        this.returnAddress = returnAddress;
-        this.onlyAddress = onlyAddress;
+        this.reregistrationTimestamp = reregistrationTimestamp;
+        this.caseNumber = caseNumber;
+        this.destraction = destraction;
+        this.nomenclature = nomenclature;
     }
 }

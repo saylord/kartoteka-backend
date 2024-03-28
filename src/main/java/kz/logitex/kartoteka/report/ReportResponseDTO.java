@@ -16,6 +16,4 @@ public class ReportResponseDTO {
     private Long secretCM;
     private Long secretCCM;
     private Long reregistration;
-    private Long returnAddress;
-    private Long onlyAddress;
 }

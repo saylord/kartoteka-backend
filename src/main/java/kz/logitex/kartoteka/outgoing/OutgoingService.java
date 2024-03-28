@@ -35,33 +35,33 @@ public class OutgoingService {
 
     public Outgoing createOutgoing(Outgoing request) {
         var createdTimestamp = System.currentTimeMillis();
-        var estimatedTimestamp = createdTimestamp + 7200000; // 2hours
 
         var outgoing = Outgoing.builder()
                 .documentNumber(request.getDocumentNumber())
                 .description(request.getDescription())
                 .exemplar(request.getExemplar())
                 .createdTimestamp(createdTimestamp)
-                .estimatedTimestamp(estimatedTimestamp)
+                .estimatedTimestamp(request.getEstimatedTimestamp())
                 .documentTimestamp(request.getDocumentTimestamp())
                 .sendingTimestamp(request.getSendingTimestamp())
                 .status(Status.OPENED)
                 .executor(request.getExecutor())
                 .building(request.getBuilding())
                 .secret(request.getSecret())
-                .copyNumber(request.getCopyNumber())
-                .copySheet(request.getCopySheet())
+                .totalSheet(request.getSheet()+request.getSchedule())
                 .sheet(request.getSheet())
                 .schedule(request.getSchedule())
                 .docDepartmentIndex(request.getDocDepartmentIndex())
-                .docCopySheet(request.getDocCopySheet())
                 .docCopyPrint(request.getDocCopyPrint())
-                .reregistration(request.isReregistration())
-                .returnAddress(request.isReturnAddress())
-                .onlyAddress(request.isOnlyAddress())
+                .reregistrationTimestamp(request.getReregistrationTimestamp())
+                .caseNumber(request.getCaseNumber())
+                .destraction(request.getDestraction())
+                .nomenclature(request.getNomenclature())
                 .build();
 
-        return outgoingRepository.save(outgoing);
+        var res = outgoingRepository.save(outgoing);
+        res.setCardNumber(res.getId() + " " + res.getSecret().getName());
+        return res;
     }
 
     public OutgoingDTO getOutgoingById(Long id) {
@@ -70,6 +70,7 @@ public class OutgoingService {
         return OutgoingDTO.builder()
                 .id(outgoing.getId())
                 .documentNumber(outgoing.getDocumentNumber())
+                .cardNumber(outgoing.getCardNumber())
                 .description(outgoing.getDescription())
                 .exemplar(outgoing.getExemplar())
                 .executor(outgoing.getExecutor())
@@ -83,16 +84,15 @@ public class OutgoingService {
                 .building(outgoing.getBuilding())
                 .userLastUpdated(outgoing.getUserLastUpdated())
                 .secret(outgoing.getSecret())
-                .copyNumber(outgoing.getCopyNumber())
-                .copySheet(outgoing.getCopySheet())
+                .totalSheet(outgoing.getTotalSheet())
                 .sheet(outgoing.getSheet())
                 .schedule(outgoing.getSchedule())
                 .docDepartmentIndex(outgoing.getDocDepartmentIndex())
-                .docCopySheet(outgoing.getDocCopySheet())
                 .docCopyPrint(outgoing.getDocCopyPrint())
-                .reregistration(outgoing.isReregistration())
-                .returnAddress(outgoing.isReturnAddress())
-                .onlyAddress(outgoing.isOnlyAddress())
+                .reregistrationTimestamp(outgoing.getReregistrationTimestamp())
+                .caseNumber(outgoing.getCaseNumber())
+                .destraction(outgoing.getDescription())
+                .nomenclature(outgoing.getNomenclature())
                 .build();
     }
 
@@ -144,6 +144,7 @@ public class OutgoingService {
             );
         }
         outgoing.setDocumentNumber(request.getDocumentNumber());
+        outgoing.setCardNumber(request.getId() + " " + request.getSecret().getName());
         outgoing.setDescription(request.getDescription());
         outgoing.setExemplar(request.getExemplar());
         outgoing.setDocumentTimestamp(request.getDocumentTimestamp());
@@ -153,16 +154,15 @@ public class OutgoingService {
         outgoing.setStatus(request.getStatus());
         outgoing.setBuilding(request.getBuilding());
         outgoing.setSecret(request.getSecret());
-        outgoing.setCopyNumber(request.getCopyNumber());
-        outgoing.setCopySheet(request.getCopySheet());
+        outgoing.setTotalSheet(request.getSheet()+request.getSchedule());
         outgoing.setSheet(request.getSheet());
         outgoing.setSchedule(request.getSchedule());
         outgoing.setDocDepartmentIndex(request.getDocDepartmentIndex());
-        outgoing.setDocCopySheet(request.getCopySheet());
         outgoing.setDocCopyPrint(request.getDocCopyPrint());
-        outgoing.setReregistration(request.isReregistration());
-        outgoing.setReturnAddress(request.isReturnAddress());
-        outgoing.setOnlyAddress(request.isOnlyAddress());
+        outgoing.setReregistrationTimestamp(request.getReregistrationTimestamp());
+        outgoing.setCaseNumber(request.getCaseNumber());
+        outgoing.setDescription(request.getDescription());
+        outgoing.setNomenclature(request.getNomenclature());
 
         return outgoingRepository.save(outgoing);
     }

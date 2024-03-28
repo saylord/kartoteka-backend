@@ -34,9 +34,9 @@ public class ReportOutgoingExportPdf {
             "Всего листов",
             "Приложение",
             "11. Номер экземпляра документа, дата, номер реестр или Экз. №", // непонятно
-            "12. Отметка об уничтожении (номер экземпляра, количество листов, номер и дата акта об уничтожении, расписка ПЗГС об уничтожении)",
-            "13. Расписка работника ОЗГС в получении документа от исполнителя, дела, номера экземпляров",
-            "14. Расписка работника ОЗГС в получении документа для отправки дата, номера экземпляров",
+            "12. Отметка об уничтожении (номер экземпляра, количество листов, номер и дата акта об уничтожении, расписка УЗГС об уничтожении)",
+            "13. Расписка работника УЗГС в получении документа от исполнителя, дела, номера экземпляров",
+            "14. Расписка работника УЗГС в получении документа для отправки дата, номера экземпляров",
             "15. Расписка исполнителя в получении документа после отправки дата, номера экземпляров"
     };
     private final static String underline = "_______________________________________________________________________________________";
@@ -53,7 +53,7 @@ public class ReportOutgoingExportPdf {
         var fontNormal12 = new Font(baseFont, 12, Font.NORMAL, BaseColor.BLACK);
         var fontBold14 = new Font(baseFont, 14, Font.BOLD, BaseColor.BLACK);
 
-        var centerParagraph = new Paragraph(title + outgoing.getId() + " " + outgoing.getSecret().getName(), fontBold14);
+        var centerParagraph = new Paragraph(title + outgoing.getCardNumber(), fontBold14);
         centerParagraph.setAlignment(Paragraph.ALIGN_CENTER);
         centerParagraph.setSpacingBefore(0f);
         centerParagraph.setSpacingAfter(0f);
@@ -94,7 +94,7 @@ public class ReportOutgoingExportPdf {
         var paragraph11 = new Paragraph(firstTableHeaders[14], fontNormal12);
         paragraph11.setAlignment(Paragraph.ALIGN_LEFT);
         document.add(paragraph11);
-        var paragraph11_2 = new Paragraph(underline, fontNormal12);
+        var paragraph11_2 = new Paragraph(outgoing.getExemplar(), fontNormal12);
         paragraph11_2.setAlignment(Paragraph.ALIGN_LEFT);
         paragraph11_2.setSpacingAfter(5f);
         document.add(paragraph11_2);
@@ -102,7 +102,7 @@ public class ReportOutgoingExportPdf {
         var paragraph12 = new Paragraph(firstTableHeaders[15], fontNormal12);
         paragraph12.setAlignment(Paragraph.ALIGN_LEFT);
         document.add(paragraph12);
-        var paragraph12_2 = new Paragraph(underline, fontNormal12);
+        var paragraph12_2 = new Paragraph(outgoing.getDestraction(), fontNormal12);
         paragraph12_2.setAlignment(Paragraph.ALIGN_LEFT);
         paragraph12_2.setSpacingAfter(5f);
         document.add(paragraph12_2);
@@ -140,7 +140,7 @@ public class ReportOutgoingExportPdf {
         cell.setPhrase(new Phrase(String.valueOf(outgoing.getDocCopyPrint()), font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase(String.valueOf(outgoing.getDocCopyPrint()), font));
+        cell.setPhrase(new Phrase(String.valueOf(outgoing.getTotalSheet()), font));
         table.addCell(cell);
 
         cell.setPhrase(new Phrase(String.valueOf(outgoing.getDocDepartmentIndex()), font));
@@ -157,7 +157,7 @@ public class ReportOutgoingExportPdf {
         cell.setPhrase(new Phrase(" ", font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase(" ", font));
+        cell.setPhrase(new Phrase(outgoing.getCaseNumber(), font));
         table.addCell(cell);
     }
 
@@ -183,10 +183,10 @@ public class ReportOutgoingExportPdf {
         cell.setPhrase(new Phrase(outgoing.getExemplar(), font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase(String.valueOf(outgoing.getCopySheet()), font));
+        cell.setPhrase(new Phrase(String.valueOf(outgoing.getSheet()), font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase(String.valueOf(outgoing.getSheet()), font));
+        cell.setPhrase(new Phrase(String.valueOf(outgoing.getTotalSheet()), font));
         table.addCell(cell);
 
         cell.setPhrase(new Phrase(String.valueOf(outgoing.getSchedule()), font));
@@ -196,11 +196,22 @@ public class ReportOutgoingExportPdf {
             if (i == 49) {
                 cell.setPhrase(new Phrase("Всего: ", font));
                 table.addCell(cell);
-                continue;
+                break;
             }
             cell.setPhrase(new Phrase(" ", font));
             table.addCell(cell);
         }
+        cell.setPhrase(new Phrase(outgoing.getExemplar(), font));
+        table.addCell(cell);
+
+        cell.setPhrase(new Phrase(String.valueOf(outgoing.getSheet()), font));
+        table.addCell(cell);
+
+        cell.setPhrase(new Phrase(String.valueOf(outgoing.getTotalSheet()), font));
+        table.addCell(cell);
+
+        cell.setPhrase(new Phrase(String.valueOf(outgoing.getSchedule()), font));
+        table.addCell(cell);
     }
 
     private void writeTable3Header(PdfPTable table, Font font) {

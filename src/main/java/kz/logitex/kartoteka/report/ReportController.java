@@ -33,7 +33,8 @@ public class ReportController {
     @SneakyThrows
     public void generatePdfFileById(HttpServletResponse response,
                                     @PathVariable(value = "id") Long id,
-                                    @RequestParam(defaultValue = "true") boolean ingoing) {
+                                    @RequestParam(defaultValue = "true") boolean ingoing,
+                                    @RequestParam(defaultValue = "true") boolean russian) {
         response.setContentType("application/pdf");
         var dateFormat = new SimpleDateFormat("yyyy-MM-dd:HH:mm:ss");
         var currentDateTime = dateFormat.format(new Date());
@@ -42,8 +43,13 @@ public class ReportController {
         response.setHeader(headerKey, headerValue);
         if (ingoing) {
             var res = ingoingService.getIngoingById(id);
-            var generator = new ReportIngoingExportPdf(res);
-            generator.generate(response);
+            if (russian){
+                var generator = new ReportIngoingExportPdfRus(res);
+                generator.generate(response);
+            } else {
+                var generator = new ReportIngoingExportPdfKaz(res);
+                generator.generate(response);
+            }
         } else {
             var res = outgoingService.getOutgoingById(id);
             var generator = new ReportOutgoingExportPdf(res);

@@ -112,8 +112,8 @@ public class OutgoingSearchDaoImpl implements OutgoingSearchDao {
         query.multiselect(
                 root.get("id"),
                 root.get("documentNumber"),
+                root.get("cardNumber"),
                 root.get("description"),
-                root.get("exemplar"),
                 root.get("createdTimestamp"),
                 root.get("estimatedTimestamp"),
                 root.get("closedTimestamp"),
@@ -123,16 +123,16 @@ public class OutgoingSearchDaoImpl implements OutgoingSearchDao {
                 root.get("building"),
                 root.get("secret"),
                 root.join("executor", JoinType.LEFT).alias("executor"),
-                root.get("copyNumber"),
-                root.get("copySheet"),
+                root.get("exemplar"),
+                root.get("totalSheet"),
                 root.get("sheet"),
                 root.get("schedule"),
                 root.get("docDepartmentIndex"),
-                root.get("docCopySheet"),
                 root.get("docCopyPrint"),
-                root.get("reregistration"),
-                root.get("returnAddress"),
-                root.get("onlyAddress")
+                root.get("reregistrationTimestamp"),
+                root.get("caseNumber"),
+                root.get("destraction"),
+                root.get("nomenclature")
         );
     }
 
