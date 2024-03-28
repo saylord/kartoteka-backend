@@ -34,26 +34,29 @@ public class IngoingService {
 
     public Ingoing createIngoing(Ingoing request) {
         var createdTimestamp = System.currentTimeMillis();
-        var estimatedTimestamp = createdTimestamp + 7200000; // 2hours
 
         var ingoing = Ingoing.builder()
-                .documentNumber(request.getId() + " " + request.getSecret().getName())
+                .documentNumber(request.getDocumentNumber())
                 .description(request.getDescription())
                 .resolution(request.getResolution())
                 .createdTimestamp(createdTimestamp)
-                .estimatedTimestamp(estimatedTimestamp)
+                .estimatedTimestamp(request.getEstimatedTimestamp())
                 .documentTimestamp(request.getDocumentTimestamp())
+                .executor(request.getExecutor())
                 .status(Status.OPENED)
                 .building(request.getBuilding())
                 .secret(request.getSecret())
-                .copyNumber(request.getCopyNumber())
-                .copySheet(request.getCopySheet())
+                .exemplar(request.getExemplar())
+                .totalSheet(request.getTotalSheet())
                 .sheet(request.getSheet())
                 .schedule(request.getSchedule())
-                .reregistration(request.isReregistration())
+                .reregistrationTimestamp(request.getReregistrationTimestamp())
+                .caseNumber(request.getCaseNumber())
+                .nomenclature(request.getNomenclature())
                 .build();
-
-        return ingoingRepository.save(ingoing);
+        var res = ingoingRepository.save(ingoing);
+        res.setCardNumber(res.getId() + " " + res.getSecret().getName());
+        return res;
     }
 
     public IngoingDTO getIngoingById(Long id) {
@@ -62,6 +65,7 @@ public class IngoingService {
         return IngoingDTO.builder()
                 .id(ingoing.getId())
                 .documentNumber(ingoing.getDocumentNumber())
+                .cardNumber(ingoing.getCardNumber())
                 .description(ingoing.getDescription())
                 .resolution(ingoing.getResolution())
                 .createdTimestamp(ingoing.getCreatedTimestamp())
@@ -69,15 +73,18 @@ public class IngoingService {
                 .estimatedTimestamp(ingoing.getEstimatedTimestamp())
                 .documentTimestamp(ingoing.getDocumentTimestamp())
                 .status(ingoing.getStatus())
+                .executor(ingoing.getExecutor())
                 .statusHistories(statusHistories)
                 .building(ingoing.getBuilding())
                 .userLastUpdated(ingoing.getUserLastUpdated())
                 .secret(ingoing.getSecret())
-                .copyNumber(ingoing.getCopyNumber())
-                .copySheet(ingoing.getCopySheet())
+                .exemplar(ingoing.getExemplar())
+                .totalSheet(ingoing.getTotalSheet())
                 .sheet(ingoing.getSheet())
                 .schedule(ingoing.getSchedule())
-                .reregistration(ingoing.isReregistration())
+                .reregistrationTimestamp(ingoing.getReregistrationTimestamp())
+                .caseNumber(ingoing.getCaseNumber())
+                .nomenclature(ingoing.getNomenclature())
                 .build();
     }
 
@@ -128,19 +135,23 @@ public class IngoingService {
                     request.getStatus()
             );
         }
-        ingoing.setDocumentNumber(request.getId() + " " + request.getSecret().getName());
+        ingoing.setDocumentNumber(request.getDocumentNumber());
+        ingoing.setCardNumber(request.getId() + " " + request.getSecret().getName());
         ingoing.setDescription(request.getDescription());
         ingoing.setResolution(request.getResolution());
         ingoing.setDocumentTimestamp(request.getDocumentTimestamp());
         ingoing.setUserLastUpdated(currentUser);
+        ingoing.setExecutor(request.getExecutor());
         ingoing.setStatus(request.getStatus());
         ingoing.setBuilding(request.getBuilding());
         ingoing.setSecret(request.getSecret());
-        ingoing.setCopyNumber(request.getCopyNumber());
-        ingoing.setCopySheet(request.getCopySheet());
+        ingoing.setExemplar(request.getExemplar());
+        ingoing.setTotalSheet(request.getTotalSheet());
         ingoing.setSheet(request.getSheet());
         ingoing.setSchedule(request.getSchedule());
-        ingoing.setReregistration(request.isReregistration());
+        ingoing.setReregistrationTimestamp(request.getReregistrationTimestamp());
+        ingoing.setCaseNumber(request.getCaseNumber());
+        ingoing.setNomenclature(request.getNomenclature());
 
         return ingoingRepository.save(ingoing);
     }

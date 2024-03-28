@@ -17,8 +17,8 @@ public class Outgoing {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String documentNumber;
+    private String cardNumber;
     private String description;
-    private String exemplar;
     private Long createdTimestamp;
     private Long estimatedTimestamp;
     private Long closedTimestamp;
@@ -34,14 +34,14 @@ public class Outgoing {
     private Secret secret;
     @ManyToOne
     private User executor;
-    private int copyNumber;
-    private int copySheet;
+    private String exemplar;
+    private int totalSheet;
     private int sheet;
     private int schedule;
     private String docDepartmentIndex;
-    private int docCopySheet;
     private int docCopyPrint;
-    private boolean reregistration;
-    private boolean returnAddress;
-    private boolean onlyAddress;
+    private Long reregistrationTimestamp;
+    private String caseNumber;
+    private String destraction;
+    private String nomenclature;
 }

@@ -112,20 +112,24 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
         query.multiselect(
                 root.get("id"),
                 root.get("documentNumber"),
+                root.get("cardNumber"),
                 root.get("description"),
                 root.get("resolution"),
                 root.get("createdTimestamp"),
                 root.get("estimatedTimestamp"),
                 root.get("closedTimestamp"),
                 root.get("documentTimestamp"),
+                root.join("executor", JoinType.LEFT).alias("executor"),
                 root.get("status"),
                 root.get("building"),
                 root.get("secret"),
-                root.get("copyNumber"),
-                root.get("copySheet"),
+                root.get("exemplar"),
+                root.get("totalSheet"),
                 root.get("sheet"),
                 root.get("schedule"),
-                root.get("reregistration")
+                root.get("reregistrationTimestamp"),
+                root.get("caseNumber"),
+                root.get("nomenclature")
         );
     }
 

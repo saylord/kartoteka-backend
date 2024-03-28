@@ -17,12 +17,15 @@ public class Ingoing {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String documentNumber;
+    private String cardNumber;
     private String description;
     private String resolution;
     private Long createdTimestamp;
     private Long estimatedTimestamp;
     private Long closedTimestamp;
     private Long documentTimestamp;
+    @ManyToOne
+    private User executor;
     @ManyToOne
     private User userLastUpdated;
     @Enumerated(EnumType.STRING)
@@ -31,10 +34,12 @@ public class Ingoing {
     private Building building;
     @ManyToOne
     private Secret secret;
-    private int copyNumber;
-    private int copySheet;
+    private String exemplar;
+    private int totalSheet;
     private int sheet;
     private int schedule;
-    private boolean reregistration;
+    private Long reregistrationTimestamp;
+    private String caseNumber;
+    private String nomenclature;
 }
 

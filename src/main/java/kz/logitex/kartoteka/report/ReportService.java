@@ -31,7 +31,7 @@ public class ReportService {
                 .collect(Collectors.groupingBy(ingoing -> ingoing.getSecret().getName(), Collectors.counting()));
 
         long totalSchedule = ingoings.stream().mapToLong(IngoingDTO::getSchedule).sum();
-        long totalReregistration = ingoings.stream().filter(IngoingDTO::isReregistration).count();
+        long totalReregistration = ingoings.stream().filter(ingoingDTO -> ingoingDTO.getReregistrationTimestamp() != null).count();
 
         // Считаем общее количество зарегистрированных
         long totalRegistered = ingoings.size();
@@ -47,8 +47,6 @@ public class ReportService {
                 .secretCM(secretCounts.getOrDefault("СМ", 0L))
                 .secretCCM(secretCounts.getOrDefault("ССМ", 0L))
                 .reregistration(totalReregistration)
-                .returnAddress(0L)
-                .onlyAddress(0L)
                 .build();
     }
 
@@ -67,9 +65,7 @@ public class ReportService {
                 .collect(Collectors.groupingBy(outgoing -> outgoing.getSecret().getName(), Collectors.counting()));
 
         long totalSchedule = outgoings.stream().mapToLong(OutgoingDTO::getSchedule).sum();
-        long totalReregistration = outgoings.stream().filter(OutgoingDTO::isReregistration).count();
-        long totalReturnAddress = outgoings.stream().filter(OutgoingDTO::isReturnAddress).count();
-        long totalOnlyAddress = outgoings.stream().filter(OutgoingDTO::isOnlyAddress).count();
+        long totalReregistration = outgoings.stream().filter(outgoingDTO -> outgoingDTO.getReregistrationTimestamp() != null).count();
 
         // Считаем общее количество зарегистрированных
         long totalRegistered = outgoings.size();
@@ -85,8 +81,6 @@ public class ReportService {
                 .secretCM(secretCounts.getOrDefault("СМ", 0L))
                 .secretCCM(secretCounts.getOrDefault("ССМ", 0L))
                 .reregistration(totalReregistration)
-                .returnAddress(totalReturnAddress)
-                .onlyAddress(totalOnlyAddress)
                 .build();
     }
 }

@@ -12,7 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 
 @AllArgsConstructor
-public class ReportIngoingExportPdf {
+public class ReportIngoingExportPdfRus {
     private final IngoingDTO ingoing;
     private final static String header1 = "Форма 39";
     private final static String header2 = "(к.п.п. 241, 310, 319, 359, 361)";
@@ -66,7 +66,7 @@ public class ReportIngoingExportPdf {
         firstTable.addCell(secondRow);
         document.add(firstTable);
 
-        var centerParagraph = new Paragraph(title + ingoing.getId() + " " + ingoing.getSecret().getName(), fontBold14);
+        var centerParagraph = new Paragraph(title + ingoing.getCardNumber(), fontBold14);
         centerParagraph.setAlignment(Paragraph.ALIGN_CENTER);
         centerParagraph.setSpacingBefore(0f);
         centerParagraph.setSpacingAfter(0f);
@@ -105,7 +105,6 @@ public class ReportIngoingExportPdf {
         // second page
         document.newPage();
 
-
         var fourthTable = new PdfPTable(1);
         fourthTable.setWidthPercentage(100);
 
@@ -122,11 +121,15 @@ public class ReportIngoingExportPdf {
         cellHeader.setPhrase(new Phrase(firstTableHeaders[14], fontNormal12));
         fourthTable.addCell(cellHeader);
         cellHeader.setPhrase(new Phrase(" ", fontNormal12));
-        cellHeader.setPaddingBottom(20f);
         fourthTable.addCell(cellHeader);
         fourthTable.addCell(cellHeader);
         fourthTable.addCell(cellHeader);
         document.add(fourthTable);
+
+        var centerParagraph3 = new Paragraph(ingoing.getCardNumber(), fontBold14);
+        centerParagraph3.setAlignment(Paragraph.ALIGN_CENTER);
+        centerParagraph3.setSpacingBefore(10f);
+        document.add(centerParagraph3);
 
         document.close();
     }
@@ -182,13 +185,13 @@ public class ReportIngoingExportPdf {
         cell.setPhrase(new Phrase(ingoing.getBuilding().getName(), font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase(String.valueOf(ingoing.getCopyNumber()), font));
+        cell.setPhrase(new Phrase(ingoing.getExemplar(), font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase(String.valueOf(ingoing.getCopySheet()), font));
+        cell.setPhrase(new Phrase(String.valueOf(ingoing.getTotalSheet()), font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("", font));
+        cell.setPhrase(new Phrase(new Phrase(String.valueOf(ingoing.getSchedule()), font)));
         table.addCell(cell);
 
         cell.setPhrase(new Phrase(String.valueOf(ingoing.getSheet()), font));
@@ -220,10 +223,32 @@ public class ReportIngoingExportPdf {
     }
 
     private void writeTable2Data(PdfPTable table, Font font) {
+        var cell = new PdfPCell();
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+        cell.setPhrase(new Phrase(ingoing.getExemplar(), font));
+        table.addCell(cell);
+
+        if (ingoing.getExecutor() != null) {
+            cell.setPhrase(new Phrase(ingoing.getExecutor().getFio(), font));
+            table.addCell(cell);
+        } else {
+            cell.setPhrase(new Phrase(" ", font));
+            table.addCell(cell);
+        }
+
+        cell.setPhrase(new Phrase(" ", font));
+        table.addCell(cell);
+
+        cell.setPhrase(new Phrase(" ", font));
+        table.addCell(cell);
+
+        cell.setPhrase(new Phrase(ingoing.getCaseNumber(), font));
+        table.addCell(cell);
+
         for (int i = 0; i < 25; i++) {
-            var cell = new PdfPCell(new Phrase(" ", font));
+            cell.setPhrase(new Phrase(" ", font));
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setPaddingBottom(30f);
             table.addCell(cell);
         }
     }

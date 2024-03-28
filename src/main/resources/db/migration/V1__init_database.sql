@@ -37,6 +37,7 @@ create table if not exists ingoing
 (
     id                     bigserial primary key,
     document_number          varchar(128),
+    card_number          varchar(128),
     description            varchar(255),
     resolution            varchar(255),
     closed_timestamp       bigint,
@@ -48,12 +49,15 @@ create table if not exists ingoing
                    (ARRAY [('OPENED'::character varying)::text, ('CLOSED'::character varying)::text])),
     building_id             bigint constraint fkditu6lr4ek16tkxtdsne0gxib references building,
     secret_id             bigint constraint fkgucpa7a16tdxn1x4twhy2jf9 references secret,
-    copy_number int,
-    copy_sheet int,
+    exemplar varchar(64),
     sheet int,
+    total_sheet int,
     schedule int,
     user_last_updated_id bigint constraint fk61tgpffh9bl4vcry3uwsiilad references users,
-    reregistration      boolean not null
+    reregistration_timestamp      bigint,
+    executor_id         bigint constraint fkgucpa7a16tdxn1x4twho2jf9 references users,
+    case_number         varchar(255),
+    nomenclature        varchar(255)
 );
 
 -- CREATING outgoing TABLE
@@ -61,6 +65,7 @@ create table if not exists outgoing
 (
     id                     bigserial primary key,
     document_number          varchar(128),
+    card_number          varchar(128),
     exemplar varchar(64),
     description            varchar(255),
     closed_timestamp       bigint,
@@ -74,17 +79,16 @@ create table if not exists outgoing
     building_id             bigint constraint fkditu6lr4ek16tkxtdsne0gxib references building,
     secret_id             bigint constraint fkgucpa7a16tdxn1x4twhy2jf9 references secret,
     executor_id             bigint constraint fkgucpa7a16tdxn1x4twho2jf9 references users,
-    copy_number int,
-    copy_sheet int,
     sheet int,
+    total_sheet int,
     schedule int,
     doc_department_index varchar(64),
-    doc_copy_sheet int,
     doc_copy_print int,
     user_last_updated_id bigint constraint fk61tgpffh9bl4vcry3uwsdslad references users,
-    reregistration      boolean not null,
-    return_address       boolean not null,
-    only_address         boolean not null
+    reregistration_timestamp       bigint,
+    case_number         varchar(255),
+    destraction          varchar(255),
+    nomenclature        varchar(255)
 );
 
 create table ingoing_status_history
