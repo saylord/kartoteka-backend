@@ -163,6 +163,7 @@ public class OutgoingService {
         outgoing.setCaseNumber(request.getCaseNumber());
         outgoing.setDescription(request.getDescription());
         outgoing.setNomenclature(request.getNomenclature());
+        outgoing.setEstimatedTimestamp(request.getEstimatedTimestamp());
 
         return outgoingRepository.save(outgoing);
     }

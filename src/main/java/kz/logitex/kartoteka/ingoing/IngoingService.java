@@ -8,12 +8,16 @@ import kz.logitex.kartoteka.repository.UserRepository;
 import kz.logitex.kartoteka.status.StatusService;
 import kz.logitex.kartoteka.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
+import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -32,14 +36,68 @@ public class IngoingService {
     private final IngoingStatusHistoryService statusHistoryService;
     private final AuthUtil authUtil;
 
-    public Ingoing createIngoing(Ingoing request) {
-        var createdTimestamp = System.currentTimeMillis();
+    // Constants for time intervals in milliseconds
+    private static final long MILLIS_IN_TEN_DAYS = 864000000L; // Millis in ten days
 
-        var ingoing = Ingoing.builder()
+    public Ingoing createIngoing(Ingoing request) {
+        var currentTimestamp = System.currentTimeMillis();
+        var annualTimestamp = addOneYear(currentTimestamp, request.getEstimatedTimestamp());
+        var semiAnnualTimestamp = addSixMonths(currentTimestamp, request.getEstimatedTimestamp());
+        var monthlyTimestamp = addOneMonth(currentTimestamp, request.getEstimatedTimestamp());
+        var tenDayTimestamp = addTenDays(currentTimestamp, request.getEstimatedTimestamp());
+
+        // Create Ingoing object with timestamps
+        var ingoing = buildIngoing(request, currentTimestamp, annualTimestamp.a, semiAnnualTimestamp.a,
+                monthlyTimestamp.a, tenDayTimestamp.a, annualTimestamp.b, semiAnnualTimestamp.b,
+                monthlyTimestamp.b, tenDayTimestamp.b);
+
+        var res = ingoingRepository.save(ingoing);
+        res.setCardNumber(res.getId() + " " + res.getSecret().getName());
+        return res;
+    }
+
+    private Pair<Long, Boolean> addOneYear(long timestamp, long estimatedTimestamp) {
+        var dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneOffset.UTC);
+        var nextYear = dateTime.plusYears(1);
+        var nextYearTimestamp = nextYear.toInstant(ZoneOffset.UTC).toEpochMilli();
+        return nextYearTimestamp <= estimatedTimestamp ?
+                new Pair<>(nextYearTimestamp, false) :
+                new Pair<>(timestamp, true);
+    }
+
+    private Pair<Long, Boolean> addSixMonths(long timestamp, long estimatedTimestamp) {
+        var dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneOffset.UTC);
+        var nextSixMonths = dateTime.plusMonths(6);
+        var nextSixMonthsTimestamp = nextSixMonths.toInstant(ZoneOffset.UTC).toEpochMilli();
+        return nextSixMonthsTimestamp <= estimatedTimestamp ?
+                new Pair<>(nextSixMonthsTimestamp, false) :
+                new Pair<>(timestamp, true);
+    }
+
+    private Pair<Long, Boolean> addOneMonth(long timestamp, long estimatedTimestamp) {
+        var dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneOffset.UTC);
+        var nextMonth = dateTime.plusMonths(1);
+        var nextMonthTimestamp = nextMonth.toInstant(ZoneOffset.UTC).toEpochMilli();
+        return nextMonthTimestamp <= estimatedTimestamp ?
+                new Pair<>(nextMonthTimestamp, false) :
+                new Pair<>(timestamp, true);
+    }
+
+    private Pair<Long, Boolean> addTenDays(long timestamp, long estimatedTimestamp) {
+        var tenDaysTimestamp = timestamp + MILLIS_IN_TEN_DAYS;
+        return tenDaysTimestamp <= estimatedTimestamp ?
+                new Pair<>(tenDaysTimestamp, false) :
+                new Pair<>(timestamp, true);
+    }
+
+    private Ingoing buildIngoing(Ingoing request, long currentTimestamp, long annualTimestamp,
+                                 long semiAnnualTimestamp, long monthlyTimestamp, long tenDayTimestamp,
+                                 boolean annual, boolean semiAnnual, boolean monthly, boolean tenDay) {
+        return Ingoing.builder()
                 .documentNumber(request.getDocumentNumber())
                 .description(request.getDescription())
                 .resolution(request.getResolution())
-                .createdTimestamp(createdTimestamp)
+                .createdTimestamp(currentTimestamp)
                 .estimatedTimestamp(request.getEstimatedTimestamp())
                 .documentTimestamp(request.getDocumentTimestamp())
                 .executor(request.getExecutor())
@@ -53,10 +111,15 @@ public class IngoingService {
                 .reregistrationTimestamp(request.getReregistrationTimestamp())
                 .caseNumber(request.getCaseNumber())
                 .nomenclature(request.getNomenclature())
+                .annualTimestamp(annualTimestamp)
+                .semiAnnualTimestamp(semiAnnualTimestamp)
+                .monthlyTimestamp(monthlyTimestamp)
+                .tenDayTimestamp(tenDayTimestamp)
+                .annual(annual)
+                .semiAnnual(semiAnnual)
+                .monthly(monthly)
+                .tenDay(tenDay)
                 .build();
-        var res = ingoingRepository.save(ingoing);
-        res.setCardNumber(res.getId() + " " + res.getSecret().getName());
-        return res;
     }
 
     public IngoingDTO getIngoingById(Long id) {
@@ -85,6 +148,14 @@ public class IngoingService {
                 .reregistrationTimestamp(ingoing.getReregistrationTimestamp())
                 .caseNumber(ingoing.getCaseNumber())
                 .nomenclature(ingoing.getNomenclature())
+                .annualTimestamp(ingoing.getAnnualTimestamp())
+                .semiAnnualTimestamp(ingoing.getSemiAnnualTimestamp())
+                .monthlyTimestamp(ingoing.getMonthlyTimestamp())
+                .tenDayTimestamp(ingoing.getTenDayTimestamp())
+                .annual(ingoing.isAnnual())
+                .semiAnnual(ingoing.isSemiAnnual())
+                .monthly(ingoing.isMonthly())
+                .tenDay(ingoing.isTenDay())
                 .build();
     }
 
@@ -135,6 +206,26 @@ public class IngoingService {
                     request.getStatus()
             );
         }
+        if (request.isAnnual()) {
+            var annualTimestamp = addOneYear(ingoing.getAnnualTimestamp(), request.getEstimatedTimestamp());
+            ingoing.setAnnualTimestamp(annualTimestamp.a);
+            ingoing.setAnnual(annualTimestamp.b);
+        }
+        if (request.isSemiAnnual()) {
+            var semiAnnualTimestamp = addSixMonths(ingoing.getSemiAnnualTimestamp(), request.getEstimatedTimestamp());
+            ingoing.setSemiAnnualTimestamp(semiAnnualTimestamp.a);
+            ingoing.setSemiAnnual(semiAnnualTimestamp.b);
+        }
+        if (request.isMonthly()) {
+            var monthlyTimestamp = addOneMonth(ingoing.getMonthlyTimestamp(), request.getEstimatedTimestamp());
+            ingoing.setMonthlyTimestamp(monthlyTimestamp.a);
+            ingoing.setMonthly(monthlyTimestamp.b);
+        }
+        if (request.isTenDay()) {
+            var tenDayTimestamp = addTenDays(ingoing.getTenDayTimestamp(), request.getEstimatedTimestamp());
+            ingoing.setTenDayTimestamp(tenDayTimestamp.a);
+            ingoing.setTenDay(tenDayTimestamp.b);
+        }
         ingoing.setDocumentNumber(request.getDocumentNumber());
         ingoing.setCardNumber(request.getId() + " " + request.getSecret().getName());
         ingoing.setDescription(request.getDescription());
@@ -152,6 +243,7 @@ public class IngoingService {
         ingoing.setReregistrationTimestamp(request.getReregistrationTimestamp());
         ingoing.setCaseNumber(request.getCaseNumber());
         ingoing.setNomenclature(request.getNomenclature());
+        ingoing.setEstimatedTimestamp(request.getEstimatedTimestamp());
 
         return ingoingRepository.save(ingoing);
     }

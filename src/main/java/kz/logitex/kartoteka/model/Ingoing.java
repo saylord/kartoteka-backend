@@ -41,5 +41,13 @@ public class Ingoing {
     private Long reregistrationTimestamp;
     private String caseNumber;
     private String nomenclature;
+    private Long annualTimestamp;
+    private Long semiAnnualTimestamp;
+    private Long monthlyTimestamp;
+    private Long tenDayTimestamp;
+    private boolean annual = false;
+    private boolean semiAnnual = false;
+    private boolean monthly = false;
+    private boolean tenDay = false;
 }
 

@@ -129,7 +129,15 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
                 root.get("schedule"),
                 root.get("reregistrationTimestamp"),
                 root.get("caseNumber"),
-                root.get("nomenclature")
+                root.get("nomenclature"),
+                root.get("annualTimestamp"),
+                root.get("semiAnnualTimestamp"),
+                root.get("monthlyTimestamp"),
+                root.get("tenDayTimestamp"),
+                root.get("annual"),
+                root.get("semiAnnual"),
+                root.get("monthly"),
+                root.get("tenDay")
         );
     }
 
