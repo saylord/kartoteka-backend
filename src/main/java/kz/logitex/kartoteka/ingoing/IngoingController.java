@@ -56,4 +56,9 @@ public class IngoingController {
         if (!authUtil.hasPrivileges(List.of(Role.ADMIN))) throw new ForbiddenException("Доступ запрещен");
         return ResponseEntity.ok(ingoingService.deleteIngoing(id));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchIngoings(@RequestParam String term) {
+        return ResponseEntity.ok(ingoingService.searchIngoings(term));
+    }
 }

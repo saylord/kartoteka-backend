@@ -96,7 +96,9 @@ create table if not exists outgoing
     reregistration_timestamp       bigint,
     case_number         varchar(255),
     destraction          varchar(255),
-    nomenclature        varchar(255)
+    nomenclature        varchar(255),
+    ingoing_id             bigint constraint fkgucpa7a16tdxn1xkhwho2jf9 references ingoing,
+    interim_timestamp    bigint
 );
 
 create table ingoing_status_history

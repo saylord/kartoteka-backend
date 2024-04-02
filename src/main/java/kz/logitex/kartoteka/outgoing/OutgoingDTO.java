@@ -35,9 +35,11 @@ public class OutgoingDTO {
     private String caseNumber;
     private String destraction;
     private String nomenclature;
+    private Ingoing ingoing;
+    private Long interimTimestamp;
     private List<OutgoingStatusHistory> statusHistories;
 
-    public OutgoingDTO(Long id, String documentNumber, String cardNumber, String description, Long createdTimestamp, Long estimatedTimestamp, Long closedTimestamp, Long documentTimestamp, Long sendingTimestamp, Status status, Building building, Secret secret, User executor, String exemplar, int totalSheet, int sheet, int schedule, String docDepartmentIndex, int docCopyPrint, Long reregistrationTimestamp, String caseNumber, String destraction, String nomenclature) {
+    public OutgoingDTO(Long id, String documentNumber, String cardNumber, String description, Long createdTimestamp, Long estimatedTimestamp, Long closedTimestamp, Long documentTimestamp, Long sendingTimestamp, Status status, Building building, Secret secret, User executor, String exemplar, int totalSheet, int sheet, int schedule, String docDepartmentIndex, int docCopyPrint, Long reregistrationTimestamp, String caseNumber, String destraction, String nomenclature, Ingoing ingoing, Long interimTimestamp) {
         this.id = id;
         this.documentNumber = documentNumber;
         this.cardNumber = cardNumber;
@@ -61,5 +63,7 @@ public class OutgoingDTO {
         this.caseNumber = caseNumber;
         this.destraction = destraction;
         this.nomenclature = nomenclature;
+        this.ingoing = ingoing;
+        this.interimTimestamp = interimTimestamp;
     }
 }

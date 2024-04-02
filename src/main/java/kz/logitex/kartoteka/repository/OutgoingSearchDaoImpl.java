@@ -132,7 +132,9 @@ public class OutgoingSearchDaoImpl implements OutgoingSearchDao {
                 root.get("reregistrationTimestamp"),
                 root.get("caseNumber"),
                 root.get("destraction"),
-                root.get("nomenclature")
+                root.get("nomenclature"),
+                root.join("ingoing", JoinType.LEFT).alias("ingoing"),
+                root.get("interimTimestamp")
         );
     }
 

@@ -57,6 +57,8 @@ public class OutgoingService {
                 .caseNumber(request.getCaseNumber())
                 .destraction(request.getDestraction())
                 .nomenclature(request.getNomenclature())
+                .ingoing(request.getIngoing())
+                .interimTimestamp(request.getInterimTimestamp())
                 .build();
 
         var res = outgoingRepository.save(outgoing);
@@ -93,6 +95,8 @@ public class OutgoingService {
                 .caseNumber(outgoing.getCaseNumber())
                 .destraction(outgoing.getDescription())
                 .nomenclature(outgoing.getNomenclature())
+                .ingoing(outgoing.getIngoing())
+                .interimTimestamp(outgoing.getInterimTimestamp())
                 .build();
     }
 
@@ -164,6 +168,8 @@ public class OutgoingService {
         outgoing.setDescription(request.getDescription());
         outgoing.setNomenclature(request.getNomenclature());
         outgoing.setEstimatedTimestamp(request.getEstimatedTimestamp());
+        outgoing.setIngoing(request.getIngoing());
+        outgoing.setInterimTimestamp(request.getInterimTimestamp());
 
         return outgoingRepository.save(outgoing);
     }

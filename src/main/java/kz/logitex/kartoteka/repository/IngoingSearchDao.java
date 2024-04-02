@@ -3,6 +3,7 @@ package kz.logitex.kartoteka.repository;
 import kz.logitex.kartoteka.ingoing.IngoingDTO;
 import kz.logitex.kartoteka.ingoing.IngoingMinDTO;
 import kz.logitex.kartoteka.model.Building;
+import kz.logitex.kartoteka.model.Ingoing;
 import kz.logitex.kartoteka.model.Status;
 import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.data.domain.Page;
@@ -21,4 +22,5 @@ public interface IngoingSearchDao {
             String description,
             List<Building> building
     );
+    List<Ingoing> search(String term);
 }
