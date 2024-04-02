@@ -49,7 +49,7 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
         }
         // Construct the WHERE clause with the combined predicates
         query.where(cb.and(predicates.toArray(new Predicate[0])));
-        // Select the necessary attributes to construct TicketMinDTO
+        // Select the necessary attributes to construct IngoingMinDTO
         createIngoingMinDTOQuery(cb, root, query);
         // Apply sorting
         var orderList = getSortingOrders(pageable, cb, root);
@@ -215,7 +215,15 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
                 root.get("closedTimestamp").alias("closedTimestamp"),
                 root.get("estimatedTimestamp").alias("estimatedTimestamp"),
                 root.get("secret").alias("secret"),
-                root.get("building").alias("building")
+                root.get("building").alias("building"),
+                root.get("annualTimestamp").alias("annualTimestamp"),
+                root.get("semiAnnualTimestamp").alias("semiAnnualTimestamp"),
+                root.get("monthlyTimestamp").alias("monthlyTimestamp"),
+                root.get("tenDayTimestamp").alias("tenDayTimestamp"),
+                root.get("annual").alias("annual"),
+                root.get("semiAnnual").alias("semiAnnual"),
+                root.get("monthly").alias("monthly"),
+                root.get("tenDay").alias("tenDay")
         );
     }
 }

@@ -41,10 +41,11 @@ public class IngoingService {
 
     public Ingoing createIngoing(Ingoing request) {
         var currentTimestamp = System.currentTimeMillis();
-        var annualTimestamp = addOneYear(currentTimestamp, request.getEstimatedTimestamp());
-        var semiAnnualTimestamp = addSixMonths(currentTimestamp, request.getEstimatedTimestamp());
-        var monthlyTimestamp = addOneMonth(currentTimestamp, request.getEstimatedTimestamp());
-        var tenDayTimestamp = addTenDays(currentTimestamp, request.getEstimatedTimestamp());
+        var interimTimestamp = request.getAnnualTimestamp();
+        var annualTimestamp = addOneYear(interimTimestamp, request.getEstimatedTimestamp());
+        var semiAnnualTimestamp = addSixMonths(interimTimestamp, request.getEstimatedTimestamp());
+        var monthlyTimestamp = addOneMonth(interimTimestamp, request.getEstimatedTimestamp());
+        var tenDayTimestamp = addTenDays(interimTimestamp, request.getEstimatedTimestamp());
 
         // Create Ingoing object with timestamps
         var ingoing = buildIngoing(request, currentTimestamp, annualTimestamp.a, semiAnnualTimestamp.a,
