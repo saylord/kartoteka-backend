@@ -44,4 +44,7 @@ public class Outgoing {
     private String caseNumber;
     private String destraction;
     private String nomenclature;
+    @ManyToOne
+    private Ingoing ingoing;
+    private Long interimTimestamp;
 }

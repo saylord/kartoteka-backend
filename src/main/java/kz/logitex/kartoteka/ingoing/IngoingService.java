@@ -2,7 +2,9 @@ package kz.logitex.kartoteka.ingoing;
 
 import kz.logitex.kartoteka.exception.NotFoundException;
 import kz.logitex.kartoteka.model.Ingoing;
+import kz.logitex.kartoteka.model.Role;
 import kz.logitex.kartoteka.model.Status;
+import kz.logitex.kartoteka.model.User;
 import kz.logitex.kartoteka.repository.IngoingRepository;
 import kz.logitex.kartoteka.repository.UserRepository;
 import kz.logitex.kartoteka.status.StatusService;
@@ -247,6 +249,10 @@ public class IngoingService {
         ingoing.setEstimatedTimestamp(request.getEstimatedTimestamp());
 
         return ingoingRepository.save(ingoing);
+    }
+
+    public List<Ingoing> searchIngoings(String term) {
+        return ingoingRepository.search(term);
     }
 
     public Long deleteIngoing(Long id) {

@@ -8,6 +8,7 @@ import kz.logitex.kartoteka.ingoing.IngoingMinDTO;
 import kz.logitex.kartoteka.model.Building;
 import kz.logitex.kartoteka.model.Ingoing;
 import kz.logitex.kartoteka.model.Status;
+import kz.logitex.kartoteka.model.User;
 import kz.logitex.kartoteka.util.StringModifier;
 import lombok.RequiredArgsConstructor;
 import org.antlr.v4.runtime.misc.Pair;
@@ -85,6 +86,18 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
         return em.createQuery(query).getResultList();
     }
 
+    @Override
+    public List<Ingoing> search(String term) {
+        var cb = em.getCriteriaBuilder();
+        var query = cb.createQuery(Ingoing.class);
+        var root = query.from(Ingoing.class);
+
+        var predicates = new ArrayList<Predicate>();
+        addSearchCriteria(term, cb, root, predicates);
+        query.where(cb.or(predicates.toArray(new Predicate[0])));
+        return em.createQuery(query).getResultList();
+    }
+
     private Predicate buildPredicate(Long start, Long end, String description, List<Building> building,
                                      CriteriaBuilder cb, Root<Ingoing> root) {
         Predicate predicate = cb.conjunction();
@@ -156,6 +169,7 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
                 searchConditions.add(searchByDocumentNumber(normalizedTerm, cb, root));
                 searchConditions.add(searchByBuilding(normalizedTerm, cb, root));
                 searchConditions.add(searchBySecret(normalizedTerm, cb, root));
+                searchConditions.add(searchByCardNumber(normalizedTerm, cb, root));
                 var searchCondition = cb.or(searchConditions.toArray(new Predicate[0]));
                 predicates.add(searchCondition);
             }
@@ -190,6 +204,10 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
 
     private Predicate searchByDocumentNumber(String term, CriteriaBuilder cb, Root<Ingoing> root) {
         return cb.like(cb.lower(root.get("documentNumber")), "%" + term + "%");
+    }
+
+    private Predicate searchByCardNumber(String term, CriteriaBuilder cb, Root<Ingoing> root) {
+        return cb.like(cb.lower(root.get("cardNumber")), "%" + term + "%");
     }
 
     private Predicate searchByBuilding(String term, CriteriaBuilder cb, Root<Ingoing> root) {
