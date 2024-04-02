@@ -57,7 +57,15 @@ create table if not exists ingoing
     reregistration_timestamp      bigint,
     executor_id         bigint constraint fkgucpa7a16tdxn1x4twho2jf9 references users,
     case_number         varchar(255),
-    nomenclature        varchar(255)
+    nomenclature        varchar(255),
+    annual_timestamp bigint,
+    annual boolean,
+    semi_annual_timestamp bigint,
+    semi_annual boolean,
+    monthly_timestamp bigint,
+    monthly boolean,
+    ten_day_timestamp bigint,
+    ten_day boolean
 );
 
 -- CREATING outgoing TABLE

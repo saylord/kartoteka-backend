@@ -18,4 +18,12 @@ public class IngoingMinDTO {
     private Long estimatedTimestamp;
     private Building building;
     private Secret secret;
+    private Long annualTimestamp;
+    private Long semiAnnualTimestamp;
+    private Long monthlyTimestamp;
+    private Long tenDayTimestamp;
+    private boolean annual;
+    private boolean semiAnnual;
+    private boolean monthly;
+    private boolean tenDay;
 }

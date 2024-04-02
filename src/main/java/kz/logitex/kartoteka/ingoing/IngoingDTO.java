@@ -36,9 +36,17 @@ public class IngoingDTO {
     private Long reregistrationTimestamp;
     private String caseNumber;
     private String nomenclature;
+    private Long annualTimestamp;
+    private Long semiAnnualTimestamp;
+    private Long monthlyTimestamp;
+    private Long tenDayTimestamp;
+    private boolean annual;
+    private boolean semiAnnual;
+    private boolean monthly;
+    private boolean tenDay;
     private List<IngoingStatusHistory> statusHistories;
 
-    public IngoingDTO(Long id, String documentNumber, String cardNumber, String description, String resolution, Long createdTimestamp, Long estimatedTimestamp, Long closedTimestamp, Long documentTimestamp, User executor, Status status, Building building, Secret secret, String exemplar, int totalSheet, int sheet, int schedule, Long reregistrationTimestamp, String caseNumber, String nomenclature) {
+    public IngoingDTO(Long id, String documentNumber, String cardNumber, String description, String resolution, Long createdTimestamp, Long estimatedTimestamp, Long closedTimestamp, Long documentTimestamp, User executor, Status status, Building building, Secret secret, String exemplar, int totalSheet, int sheet, int schedule, Long reregistrationTimestamp, String caseNumber, String nomenclature, Long annualTimestamp, Long semiAnnualTimestamp, Long monthlyTimestamp, Long tenDayTimestamp, boolean annual, boolean semiAnnual, boolean monthly, boolean tenDay) {
         this.id = id;
         this.documentNumber = documentNumber;
         this.cardNumber = cardNumber;
@@ -59,5 +67,13 @@ public class IngoingDTO {
         this.reregistrationTimestamp = reregistrationTimestamp;
         this.caseNumber = caseNumber;
         this.nomenclature = nomenclature;
+        this.annualTimestamp = annualTimestamp;
+        this.semiAnnualTimestamp = semiAnnualTimestamp;
+        this.monthlyTimestamp = monthlyTimestamp;
+        this.tenDayTimestamp = tenDayTimestamp;
+        this.annual = annual;
+        this.semiAnnual = semiAnnual;
+        this.monthly = monthly;
+        this.tenDay = tenDay;
     }
 }
