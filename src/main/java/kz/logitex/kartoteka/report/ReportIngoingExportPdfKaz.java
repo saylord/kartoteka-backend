@@ -124,6 +124,9 @@ public class ReportIngoingExportPdfKaz {
         fourthTable.addCell(cellHeader);
         fourthTable.addCell(cellHeader);
         fourthTable.addCell(cellHeader);
+        fourthTable.addCell(cellHeader);
+        fourthTable.addCell(cellHeader);
+        fourthTable.addCell(cellHeader);
         document.add(fourthTable);
 
         var centerParagraph3 = new Paragraph(ingoing.getCardNumber(), fontBold14);
@@ -188,10 +191,10 @@ public class ReportIngoingExportPdfKaz {
         cell.setPhrase(new Phrase(ingoing.getExemplar(), font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase(String.valueOf(ingoing.getTotalSheet()), font));
+        cell.setPhrase(new Phrase(" ", font));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase(new Phrase(String.valueOf(ingoing.getSchedule()), font)));
+        cell.setPhrase(new Phrase(" ", font));
         table.addCell(cell);
 
         cell.setPhrase(new Phrase(String.valueOf(ingoing.getSheet()), font));
@@ -246,7 +249,7 @@ public class ReportIngoingExportPdfKaz {
         cell.setPhrase(new Phrase(ingoing.getCaseNumber(), font));
         table.addCell(cell);
 
-        for (int i = 0; i < 25; i++) {
+        for (int i = 0; i < 60; i++) {
             cell.setPhrase(new Phrase(" ", font));
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             table.addCell(cell);

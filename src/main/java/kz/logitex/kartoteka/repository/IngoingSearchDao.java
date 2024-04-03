@@ -15,6 +15,7 @@ import java.util.Set;
 public interface IngoingSearchDao {
     Pair<Page<IngoingMinDTO>, List<IngoingMinDTO>> findByStatusIn(String term,
                                                                   Set<Status> statuses,
+                                                                  int year,
                                                                   Pageable pageable);
     List<IngoingDTO> findAllByFilters(
             Long start,

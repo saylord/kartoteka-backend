@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,7 +26,7 @@ public class OutgoingSearchDaoImpl implements OutgoingSearchDao {
     private final EntityManager em;
 
     @Override
-    public Pair<Page<OutgoingMinDTO>, List<OutgoingMinDTO>> findByStatusIn(String term, Set<Status> statuses, Pageable pageable) {
+    public Pair<Page<OutgoingMinDTO>, List<OutgoingMinDTO>> findByStatusIn(String term, Set<Status> statuses, int year, Pageable pageable) {
         var cb = em.getCriteriaBuilder();
         var query = cb.createQuery(OutgoingMinDTO.class);
         var root = query.from(Outgoing.class);
@@ -37,7 +38,7 @@ public class OutgoingSearchDaoImpl implements OutgoingSearchDao {
 
         var listOutgoings = em.createQuery(query);
         // Add search criteria
-        addSearchCriteria(term, cb, root, predicates);
+        addSearchCriteria(term, year, cb, root, predicates);
 
         // Add predicates for filtering by status
         if (statuses != null && !statuses.isEmpty()) {
@@ -152,7 +153,7 @@ public class OutgoingSearchDaoImpl implements OutgoingSearchDao {
                 .collect(Collectors.toList());
     }
 
-    private void addSearchCriteria(String term, CriteriaBuilder cb, Root<Outgoing> root, List<Predicate> predicates) {
+    private void addSearchCriteria(String term, int year, CriteriaBuilder cb, Root<Outgoing> root, List<Predicate> predicates) {
         // Check if term is not null or empty
         if (term != null && !term.isEmpty()) {
             var id = parseId(term);
@@ -170,6 +171,28 @@ public class OutgoingSearchDaoImpl implements OutgoingSearchDao {
                 predicates.add(searchCondition);
             }
         }
+
+        if (year > 0) {
+            long startOfYear = getStartOfYearTimestamp(year);
+            long endOfYear = getEndOfYearTimestamp(year);
+
+            predicates.add(cb.greaterThanOrEqualTo(root.get("createdTimestamp"), startOfYear));
+            predicates.add(cb.lessThan(root.get("createdTimestamp"), endOfYear));
+        }
+    }
+
+    private long getStartOfYearTimestamp(int year) {
+        var calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.set(Calendar.YEAR, year);
+        return calendar.getTimeInMillis();
+    }
+
+    private long getEndOfYearTimestamp(int year) {
+        var calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.set(Calendar.YEAR, year + 1);
+        return calendar.getTimeInMillis();
     }
 
     private Long parseId(String term) {
