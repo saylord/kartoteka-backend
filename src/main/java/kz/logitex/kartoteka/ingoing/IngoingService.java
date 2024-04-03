@@ -162,14 +162,14 @@ public class IngoingService {
                 .build();
     }
 
-    public IngoingLotDTO getAllIngoingsByStatus(int page, int size, Set<Status> status, String sort, boolean asc, String term) {
+    public IngoingLotDTO getAllIngoingsByStatus(int page, int size, Set<Status> status, String sort, boolean asc, int year, String term) {
         var sorting = asc ? Sort.by(sort).ascending() : Sort.by(sort).descending();
         Pageable paging = PageRequest.of(page, size, sorting);
 
         Set<Status> statusSet = (status != null) ? status : EnumSet.allOf(Status.class);
 
         var pageIngoings = ingoingRepository.findByStatusIn(
-                term, statusSet, paging
+                term, statusSet, year, paging
         );
         return getIngoingLotDTO(pageIngoings.a, pageIngoings.b);
     }

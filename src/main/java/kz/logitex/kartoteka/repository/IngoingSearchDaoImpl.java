@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,6 +31,7 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
     @Override
     public Pair<Page<IngoingMinDTO>, List<IngoingMinDTO>> findByStatusIn(String term,
                                                                          Set<Status> statuses,
+                                                                         int year,
                                                                          Pageable pageable) {
         var cb = em.getCriteriaBuilder();
         var query = cb.createQuery(IngoingMinDTO.class);
@@ -42,7 +44,7 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
 
         var listIngoings = em.createQuery(query);
         // Add search criteria
-        addSearchCriteria(term, cb, root, predicates);
+        addSearchCriteria(term, year, cb, root, predicates);
 
         // Add predicates for filtering by status
         if (statuses != null && !statuses.isEmpty()) {
@@ -93,7 +95,7 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
         var root = query.from(Ingoing.class);
 
         var predicates = new ArrayList<Predicate>();
-        addSearchCriteria(term, cb, root, predicates);
+        addSearchCriteria(term, 0, cb, root, predicates);
         query.where(cb.or(predicates.toArray(new Predicate[0])));
         return em.createQuery(query).getResultList();
     }
@@ -154,7 +156,7 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
         );
     }
 
-    private void addSearchCriteria(String term, CriteriaBuilder cb, Root<Ingoing> root, List<Predicate> predicates) {
+    private void addSearchCriteria(String term, int year, CriteriaBuilder cb, Root<Ingoing> root, List<Predicate> predicates) {
         if (term != null && !term.isEmpty()) {
             var id = parseId(term);
             if (id != null) {
@@ -174,6 +176,28 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
                 predicates.add(searchCondition);
             }
         }
+
+        if (year > 0) {
+            long startOfYear = getStartOfYearTimestamp(year);
+            long endOfYear = getEndOfYearTimestamp(year);
+
+            predicates.add(cb.greaterThanOrEqualTo(root.get("createdTimestamp"), startOfYear));
+            predicates.add(cb.lessThan(root.get("createdTimestamp"), endOfYear));
+        }
+    }
+
+    private long getStartOfYearTimestamp(int year) {
+        var calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.set(Calendar.YEAR, year);
+        return calendar.getTimeInMillis();
+    }
+
+    private long getEndOfYearTimestamp(int year) {
+        var calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.set(Calendar.YEAR, year + 1);
+        return calendar.getTimeInMillis();
     }
 
     private void applyPaging(Pageable pageable, TypedQuery<IngoingMinDTO> typedQuery) {

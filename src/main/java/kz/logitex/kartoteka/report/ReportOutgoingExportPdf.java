@@ -115,6 +115,11 @@ public class ReportOutgoingExportPdf {
         writeTable3Data(fourthTable, fontNormal12);
         document.add(fourthTable);
 
+        var centerParagraph3 = new Paragraph(outgoing.getCardNumber(), fontBold14);
+        centerParagraph3.setAlignment(Paragraph.ALIGN_LEFT);
+        centerParagraph3.setSpacingBefore(10f);
+        document.add(centerParagraph3);
+
         document.close();
     }
 
@@ -227,7 +232,7 @@ public class ReportOutgoingExportPdf {
         var cell = new PdfPCell();
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 30; i++) {
             cell.setPhrase(new Phrase(" ", font));
             table.addCell(cell);
         }
