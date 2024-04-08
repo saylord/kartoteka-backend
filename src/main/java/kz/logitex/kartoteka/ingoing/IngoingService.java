@@ -54,9 +54,10 @@ public class IngoingService {
                 monthlyTimestamp.a, tenDayTimestamp.a, annualTimestamp.b, semiAnnualTimestamp.b,
                 monthlyTimestamp.b, tenDayTimestamp.b);
 
-        var res = ingoingRepository.save(ingoing);
-        res.setCardNumber(res.getId() + " " + res.getSecret().getName());
-        return res;
+        ingoing = ingoingRepository.save(ingoing);
+        ingoing.setCardNumber(ingoing.getId() + " " + ingoing.getSecret().getName());
+        ingoingRepository.save(ingoing);
+        return ingoing;
     }
 
     private Pair<Long, Boolean> addOneYear(long timestamp, long estimatedTimestamp) {
