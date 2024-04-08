@@ -172,12 +172,14 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
                 searchConditions.add(searchByBuilding(normalizedTerm, cb, root));
                 searchConditions.add(searchBySecret(normalizedTerm, cb, root));
                 searchConditions.add(searchByCardNumber(normalizedTerm, cb, root));
+                searchConditions.add(searchByExecutor(normalizedTerm, cb, root));
+                searchConditions.add(searchByDescription(normalizedTerm, cb, root));
                 var searchCondition = cb.or(searchConditions.toArray(new Predicate[0]));
                 predicates.add(searchCondition);
             }
         }
 
-        if (year > 0) {
+        if (year > 1970) {
             long startOfYear = getStartOfYearTimestamp(year);
             long endOfYear = getEndOfYearTimestamp(year);
 
@@ -234,6 +236,19 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
         return cb.like(cb.lower(root.get("cardNumber")), "%" + term + "%");
     }
 
+    private Predicate searchByExecutor(String term, CriteriaBuilder cb, Root<Ingoing> root) {
+        var executorJoin = root.join("executor", JoinType.LEFT);
+        var executorName = cb.concat(
+                cb.concat(cb.literal(" "), executorJoin.get("firstname")),
+                executorJoin.get("lastname")
+        );
+        return cb.like(cb.lower(executorName), "%" + term + "%");
+    }
+
+    private Predicate searchByDescription(String term, CriteriaBuilder cb, Root<Ingoing> root) {
+        return cb.like(cb.lower(root.get("description")), "%" + term + "%");
+    }
+
     private Predicate searchByBuilding(String term, CriteriaBuilder cb, Root<Ingoing> root) {
         var buildingJoin = root.join("building");
         return cb.like(cb.lower(buildingJoin.get("name")), "%" + term + "%");
@@ -252,12 +267,15 @@ public class IngoingSearchDaoImpl implements IngoingSearchDao {
         query.multiselect(
                 root.get("id").alias("id"),
                 root.get("documentNumber").alias("documentNumber"),
+                root.get("cardNumber").alias("cardNumber"),
+                root.get("description").alias("description"),
                 root.get("status").alias("status"),
                 root.get("createdTimestamp").alias("createdTimestamp"),
                 root.get("closedTimestamp").alias("closedTimestamp"),
                 root.get("estimatedTimestamp").alias("estimatedTimestamp"),
-                root.get("secret").alias("secret"),
+                root.join("executor", JoinType.LEFT).alias("executor"),
                 root.get("building").alias("building"),
+                root.get("secret").alias("secret"),
                 root.get("annualTimestamp").alias("annualTimestamp"),
                 root.get("semiAnnualTimestamp").alias("semiAnnualTimestamp"),
                 root.get("monthlyTimestamp").alias("monthlyTimestamp"),

@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 public class OutgoingMinDTO {
     private Long id;
     private String documentNumber;
+    private String cardNumber;
+    private String description;
     private Status status;
     private User executor;
     private Long createdTimestamp;

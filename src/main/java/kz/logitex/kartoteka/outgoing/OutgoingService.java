@@ -61,9 +61,10 @@ public class OutgoingService {
                 .interimTimestamp(request.getInterimTimestamp())
                 .build();
 
-        var res = outgoingRepository.save(outgoing);
-        res.setCardNumber(res.getId() + " " + res.getSecret().getName());
-        return res;
+        outgoing = outgoingRepository.save(outgoing);
+        outgoing.setCardNumber(outgoing.getId() + " " + outgoing.getSecret().getName());
+        outgoingRepository.save(outgoing);
+        return outgoing;
     }
 
     public OutgoingDTO getOutgoingById(Long id) {

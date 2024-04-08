@@ -167,12 +167,14 @@ public class OutgoingSearchDaoImpl implements OutgoingSearchDao {
                 searchConditions.add(searchByBuilding(normalizedTerm, cb, root));
                 searchConditions.add(searchBySecret(normalizedTerm, cb, root));
                 searchConditions.add(searchByExecutor(normalizedTerm, cb, root));
+                searchConditions.add(searchByDescription(normalizedTerm, cb, root));
+                searchConditions.add(searchByCardNumber(normalizedTerm, cb, root));
                 var searchCondition = cb.or(searchConditions.toArray(new Predicate[0]));
                 predicates.add(searchCondition);
             }
         }
 
-        if (year > 0) {
+        if (year > 1970) {
             long startOfYear = getStartOfYearTimestamp(year);
             long endOfYear = getEndOfYearTimestamp(year);
 
@@ -211,6 +213,14 @@ public class OutgoingSearchDaoImpl implements OutgoingSearchDao {
         return cb.like(cb.lower(root.get("documentNumber")), "%" + term + "%");
     }
 
+    private Predicate searchByCardNumber(String term, CriteriaBuilder cb, Root<Outgoing> root) {
+        return cb.like(cb.lower(root.get("cardNumber")), "%" + term + "%");
+    }
+
+    private Predicate searchByDescription(String term, CriteriaBuilder cb, Root<Outgoing> root) {
+        return cb.like(cb.lower(root.get("description")), "%" + term + "%");
+    }
+
     private Predicate searchByBuilding(String term, CriteriaBuilder cb, Root<Outgoing> root) {
         var buildingJoin = root.join("building");
         return cb.like(cb.lower(buildingJoin.get("name")), "%" + term + "%");
@@ -238,6 +248,8 @@ public class OutgoingSearchDaoImpl implements OutgoingSearchDao {
         query.multiselect(
                 root.get("id").alias("id"),
                 root.get("documentNumber").alias("documentNumber"),
+                root.get("cardNumber").alias("cardNumber"),
+                root.get("description").alias("description"),
                 root.get("status").alias("status"),
                 root.join("executor", JoinType.LEFT).alias("executor"),
                 root.get("createdTimestamp").alias("createdTimestamp"),
